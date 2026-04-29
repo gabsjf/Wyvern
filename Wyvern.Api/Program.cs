@@ -1,10 +1,11 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using Wyvern.Domain.Entities;
-using Wyvern.Infrastructure.Data;
+using System.Text.Json.Serialization;
 using Wyvern.Api.Extensions;
 using Wyvern.Application.Mappings;
+using Wyvern.Domain.Entities;
+using Wyvern.Infrastructure.Data;
+using Wyvern.Infrastructure.Repositories.Campanha;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AtributoProfile).Assemb
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<WyvernDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddScoped<CampanhaRepository>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

@@ -1,26 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Wyvern.Application.DTOs.Campanha;
+using Wyvern.Application.DTOs.Item;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Data;
-using AutoMapper;
-using Wyvern.Application.DTOs.Item;
+using Wyvern.Infrastructure.Repositories.Campanha;
+using Wyvern.Infrastructure.Repositories.Item;
 namespace Wyvern.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class ItemController : ControllerBase
     {
-        private readonly WyvernDbContext _contexto;
+        private readonly ItemRepository _repository;
         private readonly IMapper _mapper;
-        public ItemController(WyvernDbContext contexto, IMapper mapper)
+        public ItemController(ItemRepository repository, IMapper mapper)
         {
-            _contexto = contexto;
+            _repository = repository;
             _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<ItemResponseDto>> GetItens()
         {
-            var itens = _contexto.Itens.Where(i => i.Ativo).ToList();
+            var itens = _repository.GetItens();
             if (!itens.Any())
             {
                 return NotFound("Item não encontrado");
@@ -31,7 +34,7 @@ namespace Wyvern.Api.Controllers
         [HttpGet("{id:int}")]
         public ActionResult <ItemResponseDto> GetItemById(int id)
         {
-            var item = _contexto.Itens.FirstOrDefault(i => i.ItemId == id && i.Ativo);
+            var item = _repository.GetItem(id);
             if( item == null)
             {
                 return NotFound("Item nao encontrado");
@@ -47,9 +50,7 @@ namespace Wyvern.Api.Controllers
                 return BadRequest("item inválido");
             }
             var item = _mapper.Map<Item>(itemDto);
-            _contexto.Itens.Add(item);
-            _contexto.SaveChanges();
-            // o create retorna pra variavel um map do tipo response
+            _repository.CreateItem(item);
             var itemCriadoDto = _mapper.Map<ItemResponseDto>(item);
             return CreatedAtAction(nameof(GetItemById), new { id = item.ItemId }, itemCriadoDto);
         }
@@ -57,27 +58,29 @@ namespace Wyvern.Api.Controllers
         [HttpPut("{id:int}")]
         public ActionResult UpdateItem(int id, ItemUpdateDto itemDto)
         {
-            var itemNoBanco = _contexto.Itens.FirstOrDefault(i => i.ItemId == id && i.Ativo);
+            if (itemDto == null)
+                return BadRequest("Dados inválidos");
+            var itemNoBanco = _repository.GetItem(id);
             if (itemNoBanco == null)
             {
                 return BadRequest("Id do item não correspondente à rota");
             }
             _mapper.Map(itemDto, itemNoBanco);
-            _contexto.SaveChanges();
+            _repository.UpdateItem(itemNoBanco);
+            var itemAtualizado = _repository.GetItem(id);
+            var itemDtoAtualizado = _mapper.Map<ItemResponseDto>(itemAtualizado);
             return Ok(_mapper.Map<ItemResponseDto>(itemNoBanco));
             
         }
         [HttpDelete("{id:int}")]
         public ActionResult DeleteItem(int id)
         {
-            var item = _contexto.Itens.FirstOrDefault(i => i.ItemId == id);
+            var item = _repository.DeleteItem(id);
             if( item == null)
             {
                 return NotFound("item nao encontrado");
 
             }
-            item.Ativo = false;
-            _contexto.SaveChanges();
             return Ok("item deletado com sucesso");
         }
 
