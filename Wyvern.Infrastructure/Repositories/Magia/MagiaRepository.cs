@@ -23,7 +23,6 @@ namespace Wyvern.Infrastructure.Repositories.Magia
                 throw new ArgumentNullException(nameof(magia));
 
             _context.Magias.Add(magia);
-            _context.SaveChanges();
             return magia;
         }
 
@@ -33,7 +32,6 @@ namespace Wyvern.Infrastructure.Repositories.Magia
             if (magia is null)
                 throw new ArgumentNullException(nameof(magia));
             magia.Ativo = false;
-            _context.SaveChanges();
             return magia;
         }
 
@@ -55,7 +53,6 @@ namespace Wyvern.Infrastructure.Repositories.Magia
                 throw new ArgumentNullException(nameof(magia));
 
             _context.Entry(magia).State = EntityState.Modified;
-            _context.SaveChanges();
 
             return magia;
         }

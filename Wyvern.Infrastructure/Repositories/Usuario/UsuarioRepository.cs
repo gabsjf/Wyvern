@@ -34,7 +34,6 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
                 throw new ArgumentNullException(nameof(usuario));
 
             _context.Usuarios.Add(usuario);
-            _context.SaveChanges();
 
             return usuario;
         }
@@ -45,7 +44,6 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
                 throw new ArgumentNullException(nameof(usuario));
 
             _context.Entry(usuario).State = EntityState.Modified;
-            _context.SaveChanges();
 
             return usuario;
         }
@@ -58,7 +56,6 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
                 throw new ArgumentNullException(nameof(usuario));
 
             usuario.Ativo = false;
-            _context.SaveChanges();
 
             return usuario;
         }

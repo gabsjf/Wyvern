@@ -2,7 +2,7 @@ using PersonagemEntity = Wyvern.Domain.Entities.Personagem;
 
 namespace Wyvern.Infrastructure.Repositories.Personagem
 {
-    internal interface IPersonagemRepository
+    public interface IPersonagemRepository
     {
         IEnumerable<PersonagemEntity> GetPersonagens();
         PersonagemEntity? GetPersonagem(int id);

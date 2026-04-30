@@ -5,7 +5,7 @@ using CampanhaEntity = Wyvern.Domain.Entities.Campanha;
 
 namespace Wyvern.Infrastructure.Repositories.Campanha
 {
-    internal interface ICampanhaRepository
+   public interface ICampanhaRepository
     {
         IEnumerable<CampanhaEntity> GetCampanhas();
         CampanhaEntity? GetCampanha(int id);

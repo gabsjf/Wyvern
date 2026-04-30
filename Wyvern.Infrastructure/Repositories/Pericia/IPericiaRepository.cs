@@ -2,7 +2,7 @@ using PericiaEntity = Wyvern.Domain.Entities.Pericia;
 
 namespace Wyvern.Infrastructure.Repositories.Pericia
 {
-    internal interface IPericiaRepository
+    public interface IPericiaRepository
     {
         IEnumerable<PericiaEntity> GetPericias();
         PericiaEntity? GetPericia(int id);

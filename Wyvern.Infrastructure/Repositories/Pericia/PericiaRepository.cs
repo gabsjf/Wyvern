@@ -31,7 +31,6 @@ namespace Wyvern.Infrastructure.Repositories.Pericia
                 throw new ArgumentNullException(nameof(pericia));
 
             _context.Pericias.Add(pericia);
-            _context.SaveChanges();
 
             return pericia;
         }
@@ -42,7 +41,6 @@ namespace Wyvern.Infrastructure.Repositories.Pericia
                 throw new ArgumentNullException(nameof(pericia));
 
             _context.Entry(pericia).State = EntityState.Modified;
-            _context.SaveChanges();
 
             return pericia;
         }
@@ -55,7 +53,6 @@ namespace Wyvern.Infrastructure.Repositories.Pericia
                 throw new ArgumentNullException(nameof(pericia));
 
             pericia.Ativo = false;
-            _context.SaveChanges();
 
             return pericia;
         }

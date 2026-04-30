@@ -5,6 +5,7 @@ using Wyvern.Api.Extensions;
 using Wyvern.Application.Mappings;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Data;
+using Wyvern.Infrastructure.Repositories;
 using Wyvern.Infrastructure.Repositories.Campanha;
 
 
@@ -21,6 +22,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
 });
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AtributoProfile).Assembly));

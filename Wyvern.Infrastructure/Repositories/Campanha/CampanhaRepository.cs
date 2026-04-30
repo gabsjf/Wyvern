@@ -36,7 +36,7 @@ namespace Wyvern.Infrastructure.Repositories.Campanha
                 throw new ArgumentNullException(nameof(campanha));
 
             _context.Campanhas.Add(campanha);
-            _context.SaveChanges();
+            
 
             return campanha;
         }
@@ -47,7 +47,7 @@ namespace Wyvern.Infrastructure.Repositories.Campanha
                 throw new ArgumentNullException(nameof(campanha));
 
             _context.Entry(campanha).State = EntityState.Modified;
-            _context.SaveChanges();
+            
 
             return campanha;
         }
@@ -60,7 +60,7 @@ namespace Wyvern.Infrastructure.Repositories.Campanha
                 throw new ArgumentNullException(nameof(campanha));
 
             campanha.Ativo = false;
-            _context.SaveChanges();
+            
 
             return campanha;
         }

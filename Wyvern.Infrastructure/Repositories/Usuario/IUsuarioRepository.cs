@@ -2,7 +2,7 @@ using UsuarioEntity = Wyvern.Domain.Entities.Usuario;
 
 namespace Wyvern.Infrastructure.Repositories.Usuario
 {
-    internal interface IUsuarioRepository
+    public interface IUsuarioRepository
     {
         IEnumerable<UsuarioEntity> GetUsuarios();
         UsuarioEntity? GetUsuario(int id);

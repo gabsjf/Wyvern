@@ -6,7 +6,7 @@ using MagiaEntity = Wyvern.Domain.Entities.Magia;
 
 namespace Wyvern.Infrastructure.Repositories.Magia
 {
-    internal interface IMagiaRepository
+    public interface IMagiaRepository
     {
         IEnumerable<MagiaEntity> GetMagias();
         MagiaEntity? GetMagiaById(int id);

@@ -34,7 +34,6 @@ namespace Wyvern.Infrastructure.Repositories.Sessao
                 throw new ArgumentNullException(nameof(sessao));
 
             _context.Sessoes.Add(sessao);
-            _context.SaveChanges();
 
             return sessao;
         }
@@ -45,7 +44,6 @@ namespace Wyvern.Infrastructure.Repositories.Sessao
                 throw new ArgumentNullException(nameof(sessao));
 
             _context.Entry(sessao).State = EntityState.Modified;
-            _context.SaveChanges();
 
             return sessao;
         }
@@ -58,7 +56,6 @@ namespace Wyvern.Infrastructure.Repositories.Sessao
                 throw new ArgumentNullException(nameof(sessao));
 
             sessao.Ativo = false;
-            _context.SaveChanges();
 
             return sessao;
         }

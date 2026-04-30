@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Wyvern.Application.DTOs.Campanha;
 using Wyvern.Application.DTOs.Sessao;
 using Wyvern.Domain.Entities;
-using Wyvern.Infrastructure.Data;
-using Wyvern.Infrastructure.Repositories.Campanha;
+using Wyvern.Infrastructure.Repositories;
 
 
 namespace Wyvern.Api.Controllers
@@ -14,19 +12,19 @@ namespace Wyvern.Api.Controllers
     [Route("[Controller]")]
     public class CampanhaController : ControllerBase
     {
-        private readonly CampanhaRepository _repository;
+        private readonly IUnitOfWork _uof;
         private readonly IMapper _mapper;
 
-        public CampanhaController(CampanhaRepository repository, IMapper mapper)
+        public CampanhaController(IUnitOfWork uof, IMapper mapper)
         {
-            _repository = repository;
+            _uof = uof;
             _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<CampanhaResponseDto>> GetCampanha()
         {
-            var campanhas = _repository.GetCampanhas();
+            var campanhas = _uof.CampanhaRepository.GetCampanhas();
             if (!campanhas.Any())
             {
                 return NotFound("Nenhuma sessão encontrada");
@@ -37,7 +35,7 @@ namespace Wyvern.Api.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<CampanhaResponseDetailDto> GetCampanhaById (int id)
         {
-            var campanha = _repository.GetCampanha(id);
+            var campanha = _uof.CampanhaRepository.GetCampanha(id);
             if ( campanha == null)
             {
                 return NotFound("Campanha nao encontrada");
@@ -55,9 +53,9 @@ namespace Wyvern.Api.Controllers
 
             var campanha = _mapper.Map<Campanha>(campanhaDto);
 
-            _repository.CreateCampanha(campanha);
+            _uof.CampanhaRepository.CreateCampanha(campanha);
 
-            var campanhaCompleta = _repository.GetCampanha(campanha.CampanhaId);
+            var campanhaCompleta = _uof.CampanhaRepository.GetCampanha(campanha.CampanhaId);
 
             if (campanhaCompleta == null)
                 return CreatedAtAction(nameof(GetCampanhaById), new { id = campanha.CampanhaId }, null);
@@ -72,16 +70,16 @@ namespace Wyvern.Api.Controllers
             if (campanhaDto == null)
                 return BadRequest("Dados inválidos");
 
-            var campanhaNoBanco = _repository.GetCampanha(id);
+            var campanhaNoBanco = _uof.CampanhaRepository.GetCampanha(id);
 
             if (campanhaNoBanco == null)
                 return NotFound("Campanha não encontrada");
 
             _mapper.Map(campanhaDto, campanhaNoBanco);
 
-            _repository.UpdateCampanha(campanhaNoBanco);
+            _uof.CampanhaRepository.UpdateCampanha(campanhaNoBanco);
 
-            var campanhaAtualizada = _repository.GetCampanha(id);
+            var campanhaAtualizada = _uof.CampanhaRepository.GetCampanha(id);
 
             var campanhaDtoAtualizada = _mapper.Map<CampanhaResponseDetailDto>(campanhaAtualizada);
 
@@ -92,7 +90,7 @@ namespace Wyvern.Api.Controllers
         public ActionResult DeleteCampanha(int id)
         {
 
-            var campanha = _repository.DeleteCampanha(id);
+            var campanha = _uof.CampanhaRepository.DeleteCampanha(id);
             if (campanha == null)
             {
                 return BadRequest("Dados inválidos");
