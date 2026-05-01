@@ -2,7 +2,7 @@ using SessaoEntity = Wyvern.Domain.Entities.Sessao;
 
 namespace Wyvern.Infrastructure.Repositories.Sessao
 {
-    internal interface ISessaoRepository
+    public interface ISessaoRepository
     {
         IEnumerable<SessaoEntity> GetSessoes();
         SessaoEntity? GetSessao(int id);

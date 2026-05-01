@@ -6,7 +6,7 @@ using ItemEntity = Wyvern.Domain.Entities.Item;
 
 namespace Wyvern.Infrastructure.Repositories.Item
 {
-    internal interface IItemRepository
+    public interface IItemRepository
     {
         IEnumerable<ItemEntity> GetItens();
         ItemEntity? GetItem(int id);

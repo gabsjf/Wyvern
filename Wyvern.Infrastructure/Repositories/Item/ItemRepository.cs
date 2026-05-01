@@ -22,7 +22,7 @@ namespace Wyvern.Infrastructure.Repositories.Item
                 throw new ArgumentNullException(nameof(item));
 
             item.Ativo = false;
-            _context.SaveChanges();
+           
 
             return item;
         }
@@ -45,7 +45,7 @@ namespace Wyvern.Infrastructure.Repositories.Item
                 throw new ArgumentNullException(nameof(item));
 
             _context.Entry(item).State = EntityState.Modified;
-            _context.SaveChanges();
+           
 
             return item;
         }
@@ -56,7 +56,6 @@ namespace Wyvern.Infrastructure.Repositories.Item
                 throw new ArgumentNullException(nameof(item));
 
             _context.Itens.Add(item);
-            _context.SaveChanges();
 
             return item;
         }

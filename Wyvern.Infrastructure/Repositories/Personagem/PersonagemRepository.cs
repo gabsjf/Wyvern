@@ -39,7 +39,6 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 throw new ArgumentNullException(nameof(personagem));
 
             _context.Personagens.Add(personagem);
-            _context.SaveChanges();
 
             return personagem;
         }
@@ -50,7 +49,6 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 throw new ArgumentNullException(nameof(personagem));
 
             _context.Entry(personagem).State = EntityState.Modified;
-            _context.SaveChanges();
 
             return personagem;
         }
@@ -63,7 +61,6 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 throw new ArgumentNullException(nameof(personagem));
 
             personagem.Ativo = false;
-            _context.SaveChanges();
 
             return personagem;
         }
