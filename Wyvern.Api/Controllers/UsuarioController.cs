@@ -21,9 +21,9 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UsuarioResponseDto>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UsuarioResponseDto>>> GetUsers()
         {
-            var users = _uof.UsuarioRepository.GetUsuarios();
+            var users = await _uof.UsuarioRepository.GetUsuariosAsync();
             if (!users.Any())
             {
                 return NotFound("Nenhum usuário encontrado no banco.");
@@ -33,9 +33,9 @@ namespace Wyvern.Api.Controllers
             return Ok(usersDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult<UsuarioResponseDto> GetUserById(int id)
+        public async Task<ActionResult<UsuarioResponseDto>> GetUserById(int id)
         {
-            var user = _uof.UsuarioRepository.GetUsuario(id);
+            var user = await _uof.UsuarioRepository.GetUsuarioAsync(id);
             if ( user == null)
             {
                 return NotFound("Usuário não encontrado");
@@ -45,7 +45,7 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<UsuarioResponseDto> CreateUser (CreateUsuarioDto usuarioDto)
+        public async Task<ActionResult<UsuarioResponseDto>> CreateUser (CreateUsuarioDto usuarioDto)
         {
             if (usuarioDto == null)
             {
@@ -54,28 +54,28 @@ namespace Wyvern.Api.Controllers
             var usuario = _mapper.Map<Usuario>(usuarioDto);
             usuario.CriadoEm = DateTime.Now;
             usuario.Ativo = true;
-            _uof.UsuarioRepository.CreateUsuario(usuario);
+            await _uof.UsuarioRepository.CreateUsuarioAsync(usuario);
             var usuarioCriadoDto = _mapper.Map<UsuarioResponseDto>(usuario);
             return new CreatedAtRouteResult(nameof(GetUserById),new {id = usuario.UsuarioId},usuarioCriadoDto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateUser(int id, UsuarioUpdateDto usuarioDto)
+        public async Task<ActionResult> UpdateUser(int id, UsuarioUpdateDto usuarioDto)
         {
-            var usuarioBanco = _uof.UsuarioRepository.GetUsuario(id);
+            var usuarioBanco = await _uof.UsuarioRepository.GetUsuarioAsync(id);
             if (usuarioBanco == null)
             {
                 return NotFound("Usuário não encontrado");
             }
             _mapper.Map(usuarioDto, usuarioBanco);
-            _uof.UsuarioRepository.UpdateUsuario(usuarioBanco);
+            await _uof.UsuarioRepository.UpdateUsuarioAsync(usuarioBanco);
             return Ok(_mapper.Map<UsuarioResponseDto>(usuarioBanco));
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
-            var user = _uof.UsuarioRepository.DeleteUsuario(id);
+            var user = await _uof.UsuarioRepository.DeleteUsuarioAsync(id);
             if (user == null)
             {
                 return NotFound("Usuário não encontrado");

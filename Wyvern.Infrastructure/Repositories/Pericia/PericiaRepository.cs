@@ -13,46 +13,49 @@ namespace Wyvern.Infrastructure.Repositories.Pericia
             _context = context;
         }
 
-        public IEnumerable<PericiaEntity> GetPericias()
+        public async Task<IEnumerable<PericiaEntity>> GetPericiasAsync()
         {
-            return _context.Pericias
+            return await _context.Pericias
                 .Where(p => p.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public PericiaEntity? GetPericia(int id)
+        public async Task<PericiaEntity?> GetPericiaAsync(int id)
         {
-            return _context.Pericias.FirstOrDefault(p => p.PericiaId == id && p.Ativo);
+            return await _context.Pericias.FirstOrDefaultAsync(p => p.PericiaId == id && p.Ativo);
         }
 
-        public PericiaEntity CreatePericia(PericiaEntity pericia)
+        public async Task<PericiaEntity> CreatePericiaAsync(PericiaEntity pericia)
         {
             if (pericia is null)
                 throw new ArgumentNullException(nameof(pericia));
 
             _context.Pericias.Add(pericia);
+            await _context.SaveChangesAsync();
 
             return pericia;
         }
 
-        public PericiaEntity UpdatePericia(PericiaEntity pericia)
+        public async Task<PericiaEntity> UpdatePericiaAsync(PericiaEntity pericia)
         {
             if (pericia is null)
                 throw new ArgumentNullException(nameof(pericia));
 
             _context.Entry(pericia).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return pericia;
         }
 
-        public PericiaEntity DeletePericia(int id)
+        public async Task<PericiaEntity> DeletePericiaAsync(int id)
         {
-            var pericia = _context.Pericias.Find(id);
+            var pericia = await _context.Pericias.FindAsync(id);
 
             if (pericia is null)
                 throw new ArgumentNullException(nameof(pericia));
 
             pericia.Ativo = false;
+            await _context.SaveChangesAsync();
 
             return pericia;
         }

@@ -13,54 +13,54 @@ namespace Wyvern.Infrastructure.Repositories.Campanha
             _context = context;
         }
 
-        public IEnumerable<CampanhaEntity> GetCampanhas()
+        public async Task<IEnumerable<CampanhaEntity>> GetCampanhasAsync()
         {
-            return _context.Campanhas
+            return await _context.Campanhas
                 .Include(c => c.Mestre)
                 .Include(c => c.Sessoes)
                 .Where(c => c.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public CampanhaEntity? GetCampanha(int id)
+        public async Task<CampanhaEntity?> GetCampanhaAsync(int id)
         {
-            return _context.Campanhas
+            return await _context.Campanhas
                 .Include(c => c.Mestre)
                 .Include(c => c.Sessoes)
-                .FirstOrDefault(c => c.CampanhaId == id && c.Ativo);
+                .FirstOrDefaultAsync(c => c.CampanhaId == id && c.Ativo);
         }
 
-        public CampanhaEntity CreateCampanha(CampanhaEntity campanha)
+        public async Task<CampanhaEntity> CreateCampanhaAsync(CampanhaEntity campanha)
         {
             if (campanha is null)
                 throw new ArgumentNullException(nameof(campanha));
 
             _context.Campanhas.Add(campanha);
-            
+            await _context.SaveChangesAsync();
 
             return campanha;
         }
 
-        public CampanhaEntity UpdateCampanha(CampanhaEntity campanha)
+        public async Task<CampanhaEntity> UpdateCampanhaAsync(CampanhaEntity campanha)
         {
             if (campanha is null)
                 throw new ArgumentNullException(nameof(campanha));
 
             _context.Entry(campanha).State = EntityState.Modified;
-            
+            await _context.SaveChangesAsync();
 
             return campanha;
         }
 
-        public CampanhaEntity DeleteCampanha(int id)
+        public async Task<CampanhaEntity> DeleteCampanhaAsync(int id)
         {
-            var campanha = _context.Campanhas.Find(id);
+            var campanha = await _context.Campanhas.FindAsync(id);
 
             if (campanha is null)
                 throw new ArgumentNullException(nameof(campanha));
 
             campanha.Ativo = false;
-            
+            await _context.SaveChangesAsync();
 
             return campanha;
         }

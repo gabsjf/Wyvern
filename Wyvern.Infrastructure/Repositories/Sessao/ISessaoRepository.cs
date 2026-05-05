@@ -4,10 +4,10 @@ namespace Wyvern.Infrastructure.Repositories.Sessao
 {
     public interface ISessaoRepository
     {
-        IEnumerable<SessaoEntity> GetSessoes();
-        SessaoEntity? GetSessao(int id);
-        SessaoEntity CreateSessao(SessaoEntity sessao);
-        SessaoEntity UpdateSessao(SessaoEntity sessao);
-        SessaoEntity DeleteSessao(int id);
+        Task<IEnumerable<SessaoEntity>> GetSessoesAsync();
+        Task<SessaoEntity?> GetSessaoAsync(int id);
+        Task<SessaoEntity> CreateSessaoAsync(SessaoEntity sessao);
+        Task<SessaoEntity> UpdateSessaoAsync(SessaoEntity sessao);
+        Task<SessaoEntity> DeleteSessaoAsync(int id);
     }
 }

@@ -8,10 +8,10 @@ namespace Wyvern.Infrastructure.Repositories.Magia
 {
     public interface IMagiaRepository
     {
-        IEnumerable<MagiaEntity> GetMagias();
-        MagiaEntity? GetMagiaById(int id);
-        MagiaEntity CreateMagia(MagiaEntity magia);
-        MagiaEntity UpdateMagia(MagiaEntity magia);
-        MagiaEntity DeleteMagia(int id);
+        Task<IEnumerable<MagiaEntity>> GetMagiasAsync();
+        Task<MagiaEntity?> GetMagiaByIdAsync(int id);
+        Task<MagiaEntity> CreateMagiaAsync(MagiaEntity magia);
+        Task<MagiaEntity> UpdateMagiaAsync(MagiaEntity magia);
+        Task<MagiaEntity> DeleteMagiaAsync(int id);
     }
 }

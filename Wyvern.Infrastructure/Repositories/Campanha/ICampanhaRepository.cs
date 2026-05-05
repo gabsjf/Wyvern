@@ -7,10 +7,10 @@ namespace Wyvern.Infrastructure.Repositories.Campanha
 {
    public interface ICampanhaRepository
     {
-        IEnumerable<CampanhaEntity> GetCampanhas();
-        CampanhaEntity? GetCampanha(int id);
-        CampanhaEntity CreateCampanha(CampanhaEntity campanha);
-        CampanhaEntity UpdateCampanha(CampanhaEntity campanha);
-        CampanhaEntity DeleteCampanha(int id);
+        Task<IEnumerable<CampanhaEntity>> GetCampanhasAsync();
+        Task<CampanhaEntity?> GetCampanhaAsync(int id);
+        Task<CampanhaEntity> CreateCampanhaAsync(CampanhaEntity campanha);
+        Task<CampanhaEntity> UpdateCampanhaAsync(CampanhaEntity campanha);
+        Task<CampanhaEntity> DeleteCampanhaAsync(int id);
     }
 }

@@ -13,49 +13,52 @@ namespace Wyvern.Infrastructure.Repositories.Sessao
             _context = context;
         }
 
-        public IEnumerable<SessaoEntity> GetSessoes()
+        public async Task<IEnumerable<SessaoEntity>> GetSessoesAsync()
         {
-            return _context.Sessoes
+            return await _context.Sessoes
                 .Include(s => s.Campanha)
                 .Where(s => s.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public SessaoEntity? GetSessao(int id)
+        public async Task<SessaoEntity?> GetSessaoAsync(int id)
         {
-            return _context.Sessoes
+            return await _context.Sessoes
                 .Include(s => s.Campanha)
-                .FirstOrDefault(s => s.SessaoId == id && s.Ativo);
+                .FirstOrDefaultAsync(s => s.SessaoId == id && s.Ativo);
         }
 
-        public SessaoEntity CreateSessao(SessaoEntity sessao)
+        public async Task<SessaoEntity> CreateSessaoAsync(SessaoEntity sessao)
         {
             if (sessao is null)
                 throw new ArgumentNullException(nameof(sessao));
 
             _context.Sessoes.Add(sessao);
+            await _context.SaveChangesAsync();
 
             return sessao;
         }
 
-        public SessaoEntity UpdateSessao(SessaoEntity sessao)
+        public async Task<SessaoEntity> UpdateSessaoAsync(SessaoEntity sessao)
         {
             if (sessao is null)
                 throw new ArgumentNullException(nameof(sessao));
 
             _context.Entry(sessao).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return sessao;
         }
 
-        public SessaoEntity DeleteSessao(int id)
+        public async Task<SessaoEntity> DeleteSessaoAsync(int id)
         {
-            var sessao = _context.Sessoes.Find(id);
+            var sessao = await _context.Sessoes.FindAsync(id);
 
             if (sessao is null)
                 throw new ArgumentNullException(nameof(sessao));
 
             sessao.Ativo = false;
+            await _context.SaveChangesAsync();
 
             return sessao;
         }

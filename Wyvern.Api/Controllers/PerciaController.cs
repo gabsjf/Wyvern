@@ -18,9 +18,9 @@ public class PericiaController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<PericiaResponseDto>> GetPericias()
+    public async Task<ActionResult<IEnumerable<PericiaResponseDto>>> GetPericias()
     {
-        var pericias = _uof.PericiaRepository.GetPericias();
+        var pericias = await _uof.PericiaRepository.GetPericiasAsync();
         if (!pericias.Any()) {
             return NotFound("Pericia não encontrada");
         }
@@ -29,41 +29,41 @@ public class PericiaController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<PericiaResponseDto> GetPericiaById(int id)
+    public async Task<ActionResult<PericiaResponseDto>> GetPericiaById(int id)
     {
-        var pericia = _uof.PericiaRepository.GetPericia(id);
+        var pericia = await _uof.PericiaRepository.GetPericiaAsync(id);
         if (pericia == null) return NotFound("Perícia não encontrada.");
         var periciaDto = _mapper.Map<PericiaResponseDto>(pericia);
         return Ok(periciaDto);
     }
 
     [HttpPost]
-    public ActionResult<PericiaResponseDto> CreatePericia(CreatePericiaDto periciaDto)
+    public async Task<ActionResult<PericiaResponseDto>> CreatePericia(CreatePericiaDto periciaDto)
     {
         if(periciaDto == null)
         {
             return BadRequest("pericia inválida");
         }
         var pericia = _mapper.Map<Pericia>(periciaDto);
-        _uof.PericiaRepository.CreatePericia(pericia);
+        await _uof.PericiaRepository.CreatePericiaAsync(pericia);
         var periciaCriadaDto = _mapper.Map<PericiaResponseDto>(pericia);
         return CreatedAtAction(nameof(GetPericiaById), new { id = pericia.PericiaId }, periciaCriadaDto);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult UpdatePericia(int id, PericiaUpdateDto periciaDto)
+    public async Task<ActionResult> UpdatePericia(int id, PericiaUpdateDto periciaDto)
     {
-        var periciaBanco = _uof.PericiaRepository.GetPericia(id);
+        var periciaBanco = await _uof.PericiaRepository.GetPericiaAsync(id);
         if (periciaBanco == null) return NotFound("Perícia não encontrada.");
         _mapper.Map(periciaDto, periciaBanco);
-        _uof.PericiaRepository.UpdatePericia(periciaBanco);
+        await _uof.PericiaRepository.UpdatePericiaAsync(periciaBanco);
         return Ok(_mapper.Map<PericiaResponseDto>(periciaBanco));
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult DeletePericia(int id)
+    public async Task<ActionResult> DeletePericia(int id)
     {
-        var pericia = _uof.PericiaRepository.DeletePericia(id);
+        var pericia = await _uof.PericiaRepository.DeletePericiaAsync(id);
         if (pericia == null) return NotFound("Perícia não encontrada.");
         return Ok(new { mensagem = "Perícia desativada", id });
     }

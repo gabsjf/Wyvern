@@ -13,49 +13,52 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
             _context = context;
         }
 
-        public IEnumerable<UsuarioEntity> GetUsuarios()
+        public async Task<IEnumerable<UsuarioEntity>> GetUsuariosAsync()
         {
-            return _context.Usuarios
+            return await _context.Usuarios
                 .Include(u => u.Campanhas)
                 .Where(u => u.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public UsuarioEntity? GetUsuario(int id)
+        public async Task<UsuarioEntity?> GetUsuarioAsync(int id)
         {
-            return _context.Usuarios
+            return await _context.Usuarios
                 .Include(u => u.Campanhas)
-                .FirstOrDefault(u => u.UsuarioId == id && u.Ativo);
+                .FirstOrDefaultAsync(u => u.UsuarioId == id && u.Ativo);
         }
 
-        public UsuarioEntity CreateUsuario(UsuarioEntity usuario)
+        public async Task<UsuarioEntity> CreateUsuarioAsync(UsuarioEntity usuario)
         {
             if (usuario is null)
                 throw new ArgumentNullException(nameof(usuario));
 
             _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
 
             return usuario;
         }
 
-        public UsuarioEntity UpdateUsuario(UsuarioEntity usuario)
+        public async Task<UsuarioEntity> UpdateUsuarioAsync(UsuarioEntity usuario)
         {
             if (usuario is null)
                 throw new ArgumentNullException(nameof(usuario));
 
             _context.Entry(usuario).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return usuario;
         }
 
-        public UsuarioEntity DeleteUsuario(int id)
+        public async Task<UsuarioEntity> DeleteUsuarioAsync(int id)
         {
-            var usuario = _context.Usuarios.Find(id);
+            var usuario = await _context.Usuarios.FindAsync(id);
 
             if (usuario is null)
                 throw new ArgumentNullException(nameof(usuario));
 
             usuario.Ativo = false;
+            await _context.SaveChangesAsync();
 
             return usuario;
         }
