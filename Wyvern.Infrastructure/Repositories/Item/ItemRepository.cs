@@ -14,48 +14,49 @@ namespace Wyvern.Infrastructure.Repositories.Item
         }
 
 
-        public ItemEntity DeleteItem(int id)
+        public async Task<ItemEntity> DeleteItemAsync(int id)
         {
-            var item = _context.Itens.Find(id);
+            var item = await _context.Itens.FindAsync(id);
 
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
             item.Ativo = false;
-           
+            await _context.SaveChangesAsync();
 
             return item;
         }
 
-        public ItemEntity? GetItem(int id)
+        public async Task<ItemEntity?> GetItemAsync(int id)
         {
-            return _context.Itens.FirstOrDefault(i => i.ItemId == id && i.Ativo);
+            return await _context.Itens.FirstOrDefaultAsync(i => i.ItemId == id && i.Ativo);
         }
 
-        public IEnumerable<ItemEntity> GetItens()
+        public async Task<IEnumerable<ItemEntity>> GetItensAsync()
         {
-            return _context.Itens
+            return await _context.Itens
                 .Where(i => i.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public ItemEntity UpdateItem(ItemEntity item)
+        public async Task<ItemEntity> UpdateItemAsync(ItemEntity item)
         {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
             _context.Entry(item).State = EntityState.Modified;
-           
+            await _context.SaveChangesAsync();
 
             return item;
         }
 
-        public ItemEntity CreateItem(ItemEntity item)
+        public async Task<ItemEntity> CreateItemAsync(ItemEntity item)
         {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
             _context.Itens.Add(item);
+            await _context.SaveChangesAsync();
 
             return item;
         }

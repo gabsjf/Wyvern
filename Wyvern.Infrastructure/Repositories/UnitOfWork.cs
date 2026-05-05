@@ -89,6 +89,10 @@ namespace Wyvern.Infrastructure.Repositories
         {
             _context.SaveChanges();
         }
+        public async Task CommitAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
 
         public void Dispose()
         {

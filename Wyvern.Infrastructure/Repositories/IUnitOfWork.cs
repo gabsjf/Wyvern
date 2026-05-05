@@ -20,7 +20,7 @@ namespace Wyvern.Infrastructure.Repositories
         IPersonagemRepository PersonagemRepository { get; }
         ISessaoRepository SessaoRepository { get; }
         IUsuarioRepository UsuarioRepository { get; }
-        void Commit();
+        Task CommitAsync();
 
     }
 }

@@ -18,9 +18,9 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ItemResponseDto>> GetItens()
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItens()
         {
-            var itens = _uof.ItemRepository.GetItens();
+            var itens = await _uof.ItemRepository.GetItensAsync();
             if (!itens.Any())
             {
                 return NotFound("Item não encontrado");
@@ -29,9 +29,9 @@ namespace Wyvern.Api.Controllers
             return Ok(itensDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult <ItemResponseDto> GetItemById(int id)
+        public async Task<ActionResult<ItemResponseDto>> GetItemById(int id)
         {
-            var item = _uof.ItemRepository.GetItem(id);
+            var item = await _uof.ItemRepository.GetItemAsync(id);
             if( item == null)
             {
                 return NotFound("Item nao encontrado");
@@ -40,39 +40,39 @@ namespace Wyvern.Api.Controllers
             return Ok(itemDto);
         }
         [HttpPost]
-        public ActionResult<ItemResponseDto> CreateItem(CreateItemDto itemDto)
+        public async Task<ActionResult<ItemResponseDto>> CreateItem(CreateItemDto itemDto)
         {
             if (itemDto == null)
             {
                 return BadRequest("item inválido");
             }
             var item = _mapper.Map<Item>(itemDto);
-            _uof.ItemRepository.CreateItem(item);
+            await _uof.ItemRepository.CreateItemAsync(item);
             var itemCriadoDto = _mapper.Map<ItemResponseDto>(item);
             return CreatedAtAction(nameof(GetItemById), new { id = item.ItemId }, itemCriadoDto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateItem(int id, ItemUpdateDto itemDto)
+        public async Task<ActionResult> UpdateItem(int id, ItemUpdateDto itemDto)
         {
             if (itemDto == null)
                 return BadRequest("Dados inválidos");
-            var itemNoBanco = _uof.ItemRepository.GetItem(id);
+            var itemNoBanco = await _uof.ItemRepository.GetItemAsync(id);
             if (itemNoBanco == null)
             {
                 return BadRequest("Id do item não correspondente à rota");
             }
             _mapper.Map(itemDto, itemNoBanco);
-            _uof.ItemRepository.UpdateItem(itemNoBanco);
-            var itemAtualizado = _uof.ItemRepository.GetItem(id);
+            await _uof.ItemRepository.UpdateItemAsync(itemNoBanco);
+            var itemAtualizado = await _uof.ItemRepository.GetItemAsync(id);
             var itemDtoAtualizado = _mapper.Map<ItemResponseDto>(itemAtualizado);
             return Ok(_mapper.Map<ItemResponseDto>(itemNoBanco));
             
         }
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteItem(int id)
+        public async Task<ActionResult> DeleteItem(int id)
         {
-            var item = _uof.ItemRepository.DeleteItem(id);
+            var item = await _uof.ItemRepository.DeleteItemAsync(id);
             if( item == null)
             {
                 return NotFound("item nao encontrado");

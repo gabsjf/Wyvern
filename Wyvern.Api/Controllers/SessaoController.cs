@@ -21,9 +21,9 @@ public class SessaoController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<SessaoResponseDto>> GetSessao()
+    public async Task<ActionResult<IEnumerable<SessaoResponseDto>>> GetSessao()
     {
-        var sessions = _uof.SessaoRepository.GetSessoes();
+        var sessions = await _uof.SessaoRepository.GetSessoesAsync();
         if (!sessions.Any())
         {
             return NotFound("Nenhuma sessão encontrada");
@@ -33,9 +33,9 @@ public class SessaoController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<SessaoResponseDto> GetSessaoById(int id)
+    public async Task<ActionResult<SessaoResponseDto>> GetSessaoById(int id)
     {
-        var session = _uof.SessaoRepository.GetSessao(id);
+        var session = await _uof.SessaoRepository.GetSessaoAsync(id);
         if (session == null)
         {
             return NotFound("Sessao não encontrado");
@@ -44,14 +44,14 @@ public class SessaoController : ControllerBase
         return Ok(sessionDto);
     }
     [HttpPost]
-    public ActionResult<SessaoResponseDto> CreateSessao(CreateSessaoDto sessaoDto)
+    public async Task<ActionResult<SessaoResponseDto>> CreateSessao(CreateSessaoDto sessaoDto)
     {
         if (sessaoDto == null) return BadRequest("Dados inválidos");
 
         var sessao = _mapper.Map<Sessao>(sessaoDto);
-        _uof.SessaoRepository.CreateSessao(sessao);
+        await _uof.SessaoRepository.CreateSessaoAsync(sessao);
 
-        var sessaoCompleta = _uof.SessaoRepository.GetSessao(sessao.SessaoId);
+        var sessaoCompleta = await _uof.SessaoRepository.GetSessaoAsync(sessao.SessaoId);
         if (sessaoCompleta == null)
         {
             return CreatedAtAction(nameof(GetSessaoById), new { id = sessao.SessaoId }, null);
@@ -60,27 +60,27 @@ public class SessaoController : ControllerBase
         return CreatedAtAction(nameof(GetSessaoById), new { id = sessao.SessaoId }, sessaoCriadaDto);
     }
     [HttpPut("{id:int}")]
-    public ActionResult UpdateSessao(int id, UpdateSessaoDto sessaoDto)
+    public async Task<ActionResult> UpdateSessao(int id, UpdateSessaoDto sessaoDto)
     {
-        var sessaoBanco = _uof.SessaoRepository.GetSessao(id);
+        var sessaoBanco = await _uof.SessaoRepository.GetSessaoAsync(id);
         if (sessaoBanco == null) return NotFound("Sessão não encontrada.");
         if (sessaoBanco.CampanhaId != sessaoDto.CampanhaId)
         {
-            var campanha = _uof.CampanhaRepository.GetCampanha(sessaoDto.CampanhaId);
+            var campanha = await _uof.CampanhaRepository.GetCampanhaAsync(sessaoDto.CampanhaId);
             if (campanha == null) return BadRequest("A nova campanha informada não existe");
         }
 
         _mapper.Map(sessaoDto, sessaoBanco);
 
-        _uof.SessaoRepository.UpdateSessao(sessaoBanco);
+        await _uof.SessaoRepository.UpdateSessaoAsync(sessaoBanco);
         var sessaoAtualizadaDto = _mapper.Map<SessaoResponseDto>(sessaoBanco);
         return Ok(sessaoAtualizadaDto);
     }
 
     [HttpDelete]
-    public ActionResult DeleteSessao(int id)
+    public async Task<ActionResult> DeleteSessao(int id)
     {
-        var sessao = _uof.SessaoRepository.DeleteSessao(id);
+        var sessao = await _uof.SessaoRepository.DeleteSessaoAsync(id);
         if (sessao == null) return NotFound("Sessão não encontrada");
         return Ok("Sessão deletada com sucesso");
 

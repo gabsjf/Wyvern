@@ -4,10 +4,10 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
 {
     public interface IUsuarioRepository
     {
-        IEnumerable<UsuarioEntity> GetUsuarios();
-        UsuarioEntity? GetUsuario(int id);
-        UsuarioEntity CreateUsuario(UsuarioEntity usuario);
-        UsuarioEntity UpdateUsuario(UsuarioEntity usuario);
-        UsuarioEntity DeleteUsuario(int id);
+        Task<IEnumerable<UsuarioEntity>> GetUsuariosAsync();
+        Task<UsuarioEntity?> GetUsuarioAsync(int id);
+        Task<UsuarioEntity> CreateUsuarioAsync(UsuarioEntity usuario);
+        Task<UsuarioEntity> UpdateUsuarioAsync(UsuarioEntity usuario);
+        Task<UsuarioEntity> DeleteUsuarioAsync(int id);
     }
 }

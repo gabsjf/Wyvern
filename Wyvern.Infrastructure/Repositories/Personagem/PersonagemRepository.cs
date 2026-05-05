@@ -13,54 +13,57 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
             _context = context;
         }
 
-        public IEnumerable<PersonagemEntity> GetPersonagens()
+        public async Task<IEnumerable<PersonagemEntity>> GetPersonagensAsync()
         {
-            return _context.Personagens
+            return await _context.Personagens
                 .AsNoTracking()
                 .Include(p => p.Atributo)
                 .Include(p => p.PersonagemPlayer)
                 .Include(p => p.PersonagemCombate)
                 .Where(p => p.Ativo)
-                .ToList();
+                .ToListAsync();
         }
 
-        public PersonagemEntity? GetPersonagem(int id)
+        public async Task<PersonagemEntity?> GetPersonagemAsync(int id)
         {
-            return _context.Personagens
+            return await _context.Personagens
                 .Include(p => p.Atributo)
                 .Include(p => p.PersonagemPlayer)
                 .Include(p => p.PersonagemCombate)
-                .FirstOrDefault(p => p.PersonagemId == id && p.Ativo);
+                .FirstOrDefaultAsync(p => p.PersonagemId == id && p.Ativo);
         }
 
-        public PersonagemEntity CreatePersonagem(PersonagemEntity personagem)
+        public async Task<PersonagemEntity> CreatePersonagemAsync(PersonagemEntity personagem)
         {
             if (personagem is null)
                 throw new ArgumentNullException(nameof(personagem));
 
             _context.Personagens.Add(personagem);
+            await _context.SaveChangesAsync();
 
             return personagem;
         }
 
-        public PersonagemEntity UpdatePersonagem(PersonagemEntity personagem)
+        public async Task<PersonagemEntity> UpdatePersonagemAsync(PersonagemEntity personagem)
         {
             if (personagem is null)
                 throw new ArgumentNullException(nameof(personagem));
 
             _context.Entry(personagem).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return personagem;
         }
 
-        public PersonagemEntity DeletePersonagem(int id)
+        public async Task<PersonagemEntity> DeletePersonagemAsync(int id)
         {
-            var personagem = _context.Personagens.Find(id);
+            var personagem = await _context.Personagens.FindAsync(id);
 
             if (personagem is null)
                 throw new ArgumentNullException(nameof(personagem));
 
             personagem.Ativo = false;
+            await _context.SaveChangesAsync();
 
             return personagem;
         }

@@ -19,9 +19,9 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PersonagemResponseDto>> GetPersonagens()
+        public async Task<ActionResult<IEnumerable<PersonagemResponseDto>>> GetPersonagens()
         {
-            var personagens = _uof.PersonagemRepository.GetPersonagens();
+            var personagens = await _uof.PersonagemRepository.GetPersonagensAsync();
 
             if (personagens == null || !personagens.Any())
             {
@@ -33,9 +33,9 @@ namespace Wyvern.Api.Controllers
             return Ok(personagensDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult<PersonagemResponseDto> GetPersonagemById( int id)
+        public async Task<ActionResult<PersonagemResponseDto>> GetPersonagemById( int id)
         {
-            var personagens = _uof.PersonagemRepository.GetPersonagem(id);
+            var personagens = await _uof.PersonagemRepository.GetPersonagemAsync(id);
 
             if (personagens == null )
             {
@@ -48,7 +48,7 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PersonagemResponseDto> CreatePersonagem(PersonagemCreateDto personagemDto)
+        public async Task<ActionResult<PersonagemResponseDto>> CreatePersonagem(PersonagemCreateDto personagemDto)
         {
             if (personagemDto == null) return BadRequest("Dados inválidos");
 
@@ -56,10 +56,10 @@ namespace Wyvern.Api.Controllers
             personagem.CriadoEm = DateTime.Now;
             personagem.Ativo = true;
 
-            _uof.PersonagemRepository.CreatePersonagem(personagem);
+            await _uof.PersonagemRepository.CreatePersonagemAsync(personagem);
 
             
-            var retorno = _uof.PersonagemRepository.GetPersonagem(personagem.PersonagemId);
+            var retorno = await _uof.PersonagemRepository.GetPersonagemAsync(personagem.PersonagemId);
 
             if (retorno == null)
             {
@@ -70,9 +70,9 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdatePersonagem(int id, PersonagemUpdateDto personagemDto)
+        public async Task<ActionResult> UpdatePersonagem(int id, PersonagemUpdateDto personagemDto)
         {
-            var pBanco = _uof.PersonagemRepository.GetPersonagem(id);
+            var pBanco = await _uof.PersonagemRepository.GetPersonagemAsync(id);
 
             if (pBanco == null) return NotFound("Personagem não encontrado");
 
@@ -98,14 +98,14 @@ namespace Wyvern.Api.Controllers
                 _mapper.Map(personagemDto.PersonagemCombate, pBanco.PersonagemCombate);
             }
 
-            _uof.PersonagemRepository.UpdatePersonagem(pBanco);
+            await _uof.PersonagemRepository.UpdatePersonagemAsync(pBanco);
             return Ok(_mapper.Map<PersonagemResponseDto>(pBanco));
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeletePersonagem(int id)
+        public async Task<ActionResult> DeletePersonagem(int id)
         {
-            var personagem = _uof.PersonagemRepository.DeletePersonagem(id);
+            var personagem = await _uof.PersonagemRepository.DeletePersonagemAsync(id);
             if (personagem == null) return NotFound("Personagem não encontrado");
             return Ok(new { mensagem = "Personagem desativado com sucesso", id });
         }

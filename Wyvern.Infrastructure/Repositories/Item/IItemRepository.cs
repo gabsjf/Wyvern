@@ -8,10 +8,10 @@ namespace Wyvern.Infrastructure.Repositories.Item
 {
     public interface IItemRepository
     {
-        IEnumerable<ItemEntity> GetItens();
-        ItemEntity? GetItem(int id);
-        ItemEntity CreateItem(ItemEntity item);
-        ItemEntity UpdateItem(ItemEntity item);
-        ItemEntity DeleteItem(int id);
+        Task<IEnumerable<ItemEntity>> GetItensAsync();
+        Task<ItemEntity?> GetItemAsync(int id);
+        Task<ItemEntity> CreateItemAsync(ItemEntity item);
+        Task<ItemEntity> UpdateItemAsync(ItemEntity item);
+        Task<ItemEntity> DeleteItemAsync(int id);
     }
 }

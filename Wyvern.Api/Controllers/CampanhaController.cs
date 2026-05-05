@@ -22,9 +22,9 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CampanhaResponseDto>> GetCampanha()
+        public async Task<ActionResult<IEnumerable<CampanhaResponseDto>>> GetCampanha()
         {
-            var campanhas = _uof.CampanhaRepository.GetCampanhas();
+            var campanhas = await _uof.CampanhaRepository.GetCampanhasAsync();
             if (!campanhas.Any())
             {
                 return NotFound("Nenhuma sessão encontrada");
@@ -33,9 +33,9 @@ namespace Wyvern.Api.Controllers
             return Ok(campanhasDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult<CampanhaResponseDetailDto> GetCampanhaById (int id)
+        public async Task<ActionResult<CampanhaResponseDetailDto>> GetCampanhaById (int id)
         {
-            var campanha = _uof.CampanhaRepository.GetCampanha(id);
+            var campanha = await _uof.CampanhaRepository.GetCampanhaAsync(id);
             if ( campanha == null)
             {
                 return NotFound("Campanha nao encontrada");
@@ -46,16 +46,16 @@ namespace Wyvern.Api.Controllers
             return Ok(campanhaDto);
         }
         [HttpPost]
-        public ActionResult<CampanhaResponseDetailDto> CreateCampanha(CreateCampanhaDto campanhaDto)
+        public async Task<ActionResult<CampanhaResponseDetailDto>> CreateCampanha(CreateCampanhaDto campanhaDto)
         {
             if (campanhaDto == null)
                 return BadRequest("Dados inválidos");
 
             var campanha = _mapper.Map<Campanha>(campanhaDto);
 
-            _uof.CampanhaRepository.CreateCampanha(campanha);
+            await _uof.CampanhaRepository.CreateCampanhaAsync(campanha);
 
-            var campanhaCompleta = _uof.CampanhaRepository.GetCampanha(campanha.CampanhaId);
+            var campanhaCompleta = await _uof.CampanhaRepository.GetCampanhaAsync(campanha.CampanhaId);
 
             if (campanhaCompleta == null)
                 return CreatedAtAction(nameof(GetCampanhaById), new { id = campanha.CampanhaId }, null);
@@ -65,21 +65,21 @@ namespace Wyvern.Api.Controllers
             return CreatedAtAction(nameof(GetCampanhaById), new { id = campanha.CampanhaId }, campanhaCriadaDto);
         }
         [HttpPut("{id:int}")]
-        public ActionResult<CampanhaResponseDetailDto> UpdateCampanha(int id, CampanhaUpdatetDto campanhaDto)
+        public async Task<ActionResult<CampanhaResponseDetailDto>> UpdateCampanha(int id, CampanhaUpdatetDto campanhaDto)
         {
             if (campanhaDto == null)
                 return BadRequest("Dados inválidos");
 
-            var campanhaNoBanco = _uof.CampanhaRepository.GetCampanha(id);
+            var campanhaNoBanco = await _uof.CampanhaRepository.GetCampanhaAsync(id);
 
             if (campanhaNoBanco == null)
                 return NotFound("Campanha não encontrada");
 
             _mapper.Map(campanhaDto, campanhaNoBanco);
 
-            _uof.CampanhaRepository.UpdateCampanha(campanhaNoBanco);
+            await _uof.CampanhaRepository.UpdateCampanhaAsync(campanhaNoBanco);
 
-            var campanhaAtualizada = _uof.CampanhaRepository.GetCampanha(id);
+            var campanhaAtualizada = await _uof.CampanhaRepository.GetCampanhaAsync(id);
 
             var campanhaDtoAtualizada = _mapper.Map<CampanhaResponseDetailDto>(campanhaAtualizada);
 
@@ -87,10 +87,10 @@ namespace Wyvern.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteCampanha(int id)
+        public async Task<ActionResult> DeleteCampanha(int id)
         {
 
-            var campanha = _uof.CampanhaRepository.DeleteCampanha(id);
+            var campanha = await _uof.CampanhaRepository.DeleteCampanhaAsync(id);
             if (campanha == null)
             {
                 return BadRequest("Dados inválidos");

@@ -4,10 +4,10 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
 {
     public interface IPersonagemRepository
     {
-        IEnumerable<PersonagemEntity> GetPersonagens();
-        PersonagemEntity? GetPersonagem(int id);
-        PersonagemEntity CreatePersonagem(PersonagemEntity personagem);
-        PersonagemEntity UpdatePersonagem(PersonagemEntity personagem);
-        PersonagemEntity DeletePersonagem(int id);
+        Task<IEnumerable<PersonagemEntity>> GetPersonagensAsync();
+        Task<PersonagemEntity?> GetPersonagemAsync(int id);
+        Task<PersonagemEntity> CreatePersonagemAsync(PersonagemEntity personagem);
+        Task<PersonagemEntity> UpdatePersonagemAsync(PersonagemEntity personagem);
+        Task<PersonagemEntity> DeletePersonagemAsync(int id);
     }
 }
