@@ -27,6 +27,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AtributoProfile).Assembly));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<WyvernDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -45,6 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 app.MapControllers();
 
@@ -53,6 +64,12 @@ app.Run();
 
 [JsonSerializable(typeof(IEnumerable<Usuario>))]
 [JsonSerializable(typeof(Usuario))]
+[JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Personagem.PersonagemResponseDto>))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Personagem.PersonagemResponseDto))]
+[JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Campanha.CampanhaResponseDto>))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Campanha.CampanhaResponseDto))]
+[JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Sessao.SessaoResponseDto>))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Sessao.SessaoResponseDto))]
 internal partial class AppJsonContext : JsonSerializerContext
 {
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Sessao;
 using Wyvern.Domain.Entities;
@@ -77,12 +77,17 @@ public class SessaoController : ControllerBase
         return Ok(sessaoAtualizadaDto);
     }
 
-    [HttpDelete]
-    public async Task<ActionResult> DeleteSessao(int id)
+    [HttpDelete("{id:int}")]
+    public ActionResult DeleteSessao(int id)
     {
         var sessao = await _uof.SessaoRepository.DeleteSessaoAsync(id);
         if (sessao == null) return NotFound("Sessão não encontrada");
-        return Ok("Sessão deletada com sucesso");
+
+        sessao.Ativo = false;
+
+        _context.SaveChanges();
+
+        return Ok(new { mensagem = "Sessão deletada com sucesso" });
 
     }
 

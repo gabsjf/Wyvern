@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Wyvern.Domain.Entities;
@@ -52,14 +52,14 @@ namespace Wyvern.Infrastructure.Data
                 .HasKey(pc => pc.PersonagemId);
             modelBuilder.Entity<PersonagemCombate>()
                 .HasOne(pc => pc.Personagem)
-                .WithOne()
+                .WithOne(p => p.PersonagemCombate)
                 .HasForeignKey<PersonagemCombate>(pc => pc.PersonagemId);
 
             modelBuilder.Entity<PersonagemPlayer>()
                 .HasKey(pp => pp.PersonagemId);
             modelBuilder.Entity<PersonagemPlayer>()
                 .HasOne(pp => pp.personagem) 
-                .WithOne()
+                .WithOne(p => p.PersonagemPlayer)
                 .HasForeignKey<PersonagemPlayer>(pp => pp.PersonagemId);
 
 
@@ -80,6 +80,13 @@ namespace Wyvern.Infrastructure.Data
 
             // 4. Mapeamento Manual de Nomes de Tabela
             modelBuilder.Entity<Usuario>().ToTable("Usuario");
+
+            // 5. Seed Data
+            modelBuilder.Entity<TipoPersonagem>().HasData(
+                new TipoPersonagem { Id = 1, Nome = "Jogador" },
+                new TipoPersonagem { Id = 2, Nome = "NPC" },
+                new TipoPersonagem { Id = 3, Nome = "Monstro" }
+            );
 
             base.OnModelCreating(modelBuilder);
         }
