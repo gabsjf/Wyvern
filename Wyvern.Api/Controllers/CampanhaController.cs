@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Wyvern.Application.DTOs.Campanha;
 using Wyvern.Application.DTOs.Sessao;
 using Wyvern.Domain.Entities;
-using Wyvern.Infrastructure.Data;
+using Wyvern.Infrastructure.Repositories;
+
 
 namespace Wyvern.Api.Controllers
 {
@@ -12,23 +12,19 @@ namespace Wyvern.Api.Controllers
     [Route("[Controller]")]
     public class CampanhaController : ControllerBase
     {
-        private readonly WyvernDbContext _context;
+        private readonly IUnitOfWork _uof;
         private readonly IMapper _mapper;
 
-        public CampanhaController(WyvernDbContext context, IMapper mapper)
+        public CampanhaController(IUnitOfWork uof, IMapper mapper)
         {
-            _context = context;
+            _uof = uof;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CampanhaResponseDto>> GetCampanha()
+        public async Task<ActionResult<IEnumerable<CampanhaResponseDto>>> GetCampanha()
         {
-            var campanhas = _context.Campanhas
-                .Include(c => c.Mestre)
-                .Include(c => c.Sessoes)
-                .Where(c => c.Ativo)
-                .ToList();
+            var campanhas = await _uof.CampanhaRepository.GetCampanhasAsync();
             if (!campanhas.Any())
             {
                 return NotFound("Nenhuma sessão encontrada");
@@ -37,12 +33,9 @@ namespace Wyvern.Api.Controllers
             return Ok(campanhasDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult<CampanhaResponseDetailDto> GetCampanhaById (int id)
+        public async Task<ActionResult<CampanhaResponseDetailDto>> GetCampanhaById (int id)
         {
-            var campanha = _context.Campanhas
-                .Include(c => c.Mestre)
-                .Include (c => c.Sessoes)
-                .FirstOrDefault(c => c.CampanhaId == id && c.Ativo);
+            var campanha = await _uof.CampanhaRepository.GetCampanhaAsync(id);
             if ( campanha == null)
             {
                 return NotFound("Campanha nao encontrada");
@@ -53,40 +46,55 @@ namespace Wyvern.Api.Controllers
             return Ok(campanhaDto);
         }
         [HttpPost]
-        public ActionResult<CampanhaResponseDetailDto> CreateCampanha(CreateCampanhaDto campanhaDto)
+        public async Task<ActionResult<CampanhaResponseDetailDto>> CreateCampanha(CreateCampanhaDto campanhaDto)
         {
             if (campanhaDto == null)
-            {
                 return BadRequest("Dados inválidos");
-            }
-            var campanha = _mapper.Map<Campanha>(campanhaDto);
-            _context.Campanhas.Add(campanha);
-            _context.SaveChanges();
 
-            var campanhaCompleta = _context.Campanhas
-                .Include(c => c.Mestre)
-                .Include(c => c.Sessoes)
-                .FirstOrDefault(c => c.CampanhaId == campanha.CampanhaId);
+            var campanha = _mapper.Map<Campanha>(campanhaDto);
+
+            await _uof.CampanhaRepository.CreateCampanhaAsync(campanha);
+
+            var campanhaCompleta = await _uof.CampanhaRepository.GetCampanhaAsync(campanha.CampanhaId);
+
             if (campanhaCompleta == null)
-            {
                 return CreatedAtAction(nameof(GetCampanhaById), new { id = campanha.CampanhaId }, null);
-            }
+
             var campanhaCriadaDto = _mapper.Map<CampanhaResponseDetailDto>(campanhaCompleta);
-            campanhaCriadaDto.MestreNome = campanhaCompleta.Mestre?.Nome ?? string.Empty;
-            campanhaCriadaDto.Sessoes = _mapper.Map<List<SessaoResponseDto>>(campanhaCompleta.Sessoes ?? new List<Sessao>());
+
             return CreatedAtAction(nameof(GetCampanhaById), new { id = campanha.CampanhaId }, campanhaCriadaDto);
         }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<CampanhaResponseDetailDto>> UpdateCampanha(int id, CampanhaUpdatetDto campanhaDto)
+        {
+            if (campanhaDto == null)
+                return BadRequest("Dados inválidos");
+
+            var campanhaNoBanco = await _uof.CampanhaRepository.GetCampanhaAsync(id);
+
+            if (campanhaNoBanco == null)
+                return NotFound("Campanha não encontrada");
+
+            _mapper.Map(campanhaDto, campanhaNoBanco);
+
+            await _uof.CampanhaRepository.UpdateCampanhaAsync(campanhaNoBanco);
+
+            var campanhaAtualizada = await _uof.CampanhaRepository.GetCampanhaAsync(id);
+
+            var campanhaDtoAtualizada = _mapper.Map<CampanhaResponseDetailDto>(campanhaAtualizada);
+
+            return Ok(campanhaDtoAtualizada);
+        }
+
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteCampanha(int id)
+        public async Task<ActionResult> DeleteCampanha(int id)
         {
 
-            var campanha = _context.Campanhas.FirstOrDefault(c => c.CampanhaId == id);
+            var campanha = await _uof.CampanhaRepository.DeleteCampanhaAsync(id);
             if (campanha == null)
             {
                 return BadRequest("Dados inválidos");
             }
-            campanha.Ativo = false;
-            _context.SaveChanges();
             return Ok("Campanha deletada com sucesso");
         }
     }

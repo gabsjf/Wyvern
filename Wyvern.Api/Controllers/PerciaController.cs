@@ -1,27 +1,26 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Wyvern.Application.DTOs.Magia;
 using Wyvern.Application.DTOs.Pericia;
 using Wyvern.Domain.Entities;
-using Wyvern.Infrastructure.Data;
+using Wyvern.Infrastructure.Repositories;
 
 [ApiController]
 [Route("[controller]")]
 public class PericiaController : ControllerBase
 {
-    private readonly WyvernDbContext _context;
+    private readonly IUnitOfWork _uof;
     private readonly IMapper _mapper;
 
-    public PericiaController(WyvernDbContext context, IMapper mapper)
+    public PericiaController(IUnitOfWork uof, IMapper mapper)
     {
-        _context = context;
+        _uof = uof;
         _mapper = mapper;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<PericiaResponseDto>> GetPericias()
+    public async Task<ActionResult<IEnumerable<PericiaResponseDto>>> GetPericias()
     {
-        var pericias =_context.Pericias.Where(p => p.Ativo).ToList();
+        var pericias = await _uof.PericiaRepository.GetPericiasAsync();
         if (!pericias.Any()) {
             return NotFound("Pericia não encontrada");
         }
@@ -30,46 +29,42 @@ public class PericiaController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<PericiaResponseDto> GetPericiaById(int id)
+    public async Task<ActionResult<PericiaResponseDto>> GetPericiaById(int id)
     {
-        var pericia = _context.Pericias.FirstOrDefault(p => p.PericiaId == id && p.Ativo);
+        var pericia = await _uof.PericiaRepository.GetPericiaAsync(id);
         if (pericia == null) return NotFound("Perícia não encontrada.");
         var periciaDto = _mapper.Map<PericiaResponseDto>(pericia);
         return Ok(periciaDto);
     }
 
     [HttpPost]
-    public ActionResult<PericiaResponseDto> CreatePericia(CreatePericiaDto periciaDto)
+    public async Task<ActionResult<PericiaResponseDto>> CreatePericia(CreatePericiaDto periciaDto)
     {
         if(periciaDto == null)
         {
             return BadRequest("pericia inválida");
         }
         var pericia = _mapper.Map<Pericia>(periciaDto);
-        _context.Pericias.Add(pericia);
-        _context.SaveChanges();
+        await _uof.PericiaRepository.CreatePericiaAsync(pericia);
         var periciaCriadaDto = _mapper.Map<PericiaResponseDto>(pericia);
         return CreatedAtAction(nameof(GetPericiaById), new { id = pericia.PericiaId }, periciaCriadaDto);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult UpdatePericia(int id, PericiaUpdateDto periciaDto)
+    public async Task<ActionResult> UpdatePericia(int id, PericiaUpdateDto periciaDto)
     {
-        var periciaBanco = _context.Pericias.FirstOrDefault(p => p.PericiaId == id && p.Ativo);
+        var periciaBanco = await _uof.PericiaRepository.GetPericiaAsync(id);
         if (periciaBanco == null) return NotFound("Perícia não encontrada.");
         _mapper.Map(periciaDto, periciaBanco);
-        _context.SaveChanges();
+        await _uof.PericiaRepository.UpdatePericiaAsync(periciaBanco);
         return Ok(_mapper.Map<PericiaResponseDto>(periciaBanco));
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult DeletePericia(int id)
+    public async Task<ActionResult> DeletePericia(int id)
     {
-        var pericia = _context.Pericias.FirstOrDefault(p => p.PericiaId == id);
+        var pericia = await _uof.PericiaRepository.DeletePericiaAsync(id);
         if (pericia == null) return NotFound("Perícia não encontrada.");
-
-        pericia.Ativo = false;
-        _context.SaveChanges();
         return Ok(new { mensagem = "Perícia desativada", id });
     }
 }

@@ -1,26 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Wyvern.Domain.Entities;
-using Wyvern.Infrastructure.Data;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Item;
+using Wyvern.Domain.Entities;
+using Wyvern.Infrastructure.Repositories;
 namespace Wyvern.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class ItemController : ControllerBase
     {
-        private readonly WyvernDbContext _contexto;
+        private readonly IUnitOfWork _uof;
         private readonly IMapper _mapper;
-        public ItemController(WyvernDbContext contexto, IMapper mapper)
+        public ItemController(IUnitOfWork uof, IMapper mapper)
         {
-            _contexto = contexto;
+            _uof = uof;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ItemResponseDto>> GetItens()
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItens()
         {
-            var itens = _contexto.Itens.Where(i => i.Ativo).ToList();
+            var itens = await _uof.ItemRepository.GetItensAsync();
             if (!itens.Any())
             {
                 return NotFound("Item não encontrado");
@@ -29,9 +29,9 @@ namespace Wyvern.Api.Controllers
             return Ok(itensDto);
         }
         [HttpGet("{id:int}")]
-        public ActionResult <ItemResponseDto> GetItemById(int id)
+        public async Task<ActionResult<ItemResponseDto>> GetItemById(int id)
         {
-            var item = _contexto.Itens.FirstOrDefault(i => i.ItemId == id && i.Ativo);
+            var item = await _uof.ItemRepository.GetItemAsync(id);
             if( item == null)
             {
                 return NotFound("Item nao encontrado");
@@ -40,44 +40,44 @@ namespace Wyvern.Api.Controllers
             return Ok(itemDto);
         }
         [HttpPost]
-        public ActionResult<ItemResponseDto> CreateItem(CreateItemDto itemDto)
+        public async Task<ActionResult<ItemResponseDto>> CreateItem(CreateItemDto itemDto)
         {
             if (itemDto == null)
             {
                 return BadRequest("item inválido");
             }
             var item = _mapper.Map<Item>(itemDto);
-            _contexto.Itens.Add(item);
-            _contexto.SaveChanges();
-            // o create retorna pra variavel um map do tipo response
+            await _uof.ItemRepository.CreateItemAsync(item);
             var itemCriadoDto = _mapper.Map<ItemResponseDto>(item);
             return CreatedAtAction(nameof(GetItemById), new { id = item.ItemId }, itemCriadoDto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateItem(int id, ItemUpdateDto itemDto)
+        public async Task<ActionResult> UpdateItem(int id, ItemUpdateDto itemDto)
         {
-            var itemNoBanco = _contexto.Itens.FirstOrDefault(i => i.ItemId == id && i.Ativo);
+            if (itemDto == null)
+                return BadRequest("Dados inválidos");
+            var itemNoBanco = await _uof.ItemRepository.GetItemAsync(id);
             if (itemNoBanco == null)
             {
                 return BadRequest("Id do item não correspondente à rota");
             }
             _mapper.Map(itemDto, itemNoBanco);
-            _contexto.SaveChanges();
+            await _uof.ItemRepository.UpdateItemAsync(itemNoBanco);
+            var itemAtualizado = await _uof.ItemRepository.GetItemAsync(id);
+            var itemDtoAtualizado = _mapper.Map<ItemResponseDto>(itemAtualizado);
             return Ok(_mapper.Map<ItemResponseDto>(itemNoBanco));
             
         }
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteItem(int id)
+        public async Task<ActionResult> DeleteItem(int id)
         {
-            var item = _contexto.Itens.FirstOrDefault(i => i.ItemId == id);
+            var item = await _uof.ItemRepository.DeleteItemAsync(id);
             if( item == null)
             {
                 return NotFound("item nao encontrado");
 
             }
-            item.Ativo = false;
-            _contexto.SaveChanges();
             return Ok("item deletado com sucesso");
         }
 
