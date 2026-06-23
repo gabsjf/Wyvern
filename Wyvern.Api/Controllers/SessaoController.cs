@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wyvern.Application.DTOs.Sessao;
@@ -85,7 +85,7 @@ public class SessaoController : ControllerBase
         return Ok(sessaoAtualizadaDto);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     public ActionResult DeleteSessao(int id)
     {
         var sessao = _context.Sessoes.FirstOrDefault(s => s.SessaoId == id);
@@ -95,7 +95,7 @@ public class SessaoController : ControllerBase
 
         _context.SaveChanges();
 
-        return Ok("Sessão deletada com sucesso");
+        return Ok(new { mensagem = "Sessão deletada com sucesso" });
 
     }
 
