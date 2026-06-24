@@ -78,17 +78,17 @@ public class SessaoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult DeleteSessao(int id)
+    public async Task<ActionResult> DeleteSessao(int id)
     {
-        var sessao = await _uof.SessaoRepository.DeleteSessaoAsync(id);
-        if (sessao == null) return NotFound("Sessão não encontrada");
-
-        sessao.Ativo = false;
-
-        _context.SaveChanges();
-
-        return Ok(new { mensagem = "Sessão deletada com sucesso" });
-
+        try
+        {
+            await _uof.SessaoRepository.DeleteSessaoAsync(id);
+            return Ok(new { mensagem = "Sessão deletada com sucesso" });
+        }
+        catch (ArgumentNullException)
+        {
+            return NotFound("Sessão não encontrada");
+        }
     }
 
 }
