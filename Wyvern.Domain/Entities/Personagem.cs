@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +27,8 @@ namespace Wyvern.Domain.Entities
         public PersonagemPlayer? PersonagemPlayer { get; set; }
         public PersonagemCombate? PersonagemCombate { get; set; } 
         public List<PersonagemPericia>? PersonagemPericias { get; set; }
-
-
+        public PersonagemDetalhes? PersonagemDetalhes { get; set; }
+        public PersonagemConjuracao? PersonagemConjuracao { get; set; }
+        public PersonagemDinheiro? PersonagemDinheiro { get; set; }
     }
 }

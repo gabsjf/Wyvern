@@ -1,4 +1,4 @@
-﻿using Wyvern.Application.DTOs.Atributo;
+using Wyvern.Application.DTOs.Atributo;
 
 namespace Wyvern.Application.DTOs.Personagem
 {
@@ -15,5 +15,7 @@ namespace Wyvern.Application.DTOs.Personagem
         public AtributoResponseDto? Atributo { get; set; }
         public PersonagemPlayerResponseDto? PersonagemPlayer { get; set; }
         public PersonagemCombateResponseDto? PersonagemCombate { get; set; }
+        public PersonagemDetalhesUpdateDto? PersonagemDetalhes { get; set; }
+        public PersonagemDinheirosUpdateDto? PersonagemDinheiro { get; set; }
     }
 }

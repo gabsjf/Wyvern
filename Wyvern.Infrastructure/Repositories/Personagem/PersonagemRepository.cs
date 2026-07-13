@@ -30,6 +30,7 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 .Include(p => p.Atributo)
                 .Include(p => p.PersonagemPlayer)
                 .Include(p => p.PersonagemCombate)
+                .Include(p => p.PersonagemDetalhes)
                 .FirstOrDefaultAsync(p => p.PersonagemId == id && p.Ativo);
         }
 

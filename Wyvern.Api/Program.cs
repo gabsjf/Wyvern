@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 using Wyvern.Api.Extensions;
 using Wyvern.Application.Mappings;
+using Wyvern.Application.Services;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Data;
 using Wyvern.Infrastructure.Repositories;
@@ -22,6 +23,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
 });
+builder.Services.AddScoped<IPdfParserService, PdfParserService>();
+builder.Services.AddScoped<IPdfExportService, PdfExportService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddOpenApi();

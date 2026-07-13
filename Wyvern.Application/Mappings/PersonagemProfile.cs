@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Wyvern.Application.DTOs.Personagem;
 using Wyvern.Domain.Entities;
 
@@ -22,6 +22,9 @@ namespace Wyvern.Application.Mappings
             CreateMap<PersonagemMagia, PersonagemMagiaAddDto>().ReverseMap();
             CreateMap<PersonagemPericia, PersonagemPericiaAddDto>().ReverseMap();
             CreateMap<PersonagemPericia, PersonagemPericiaUpdateDto>().ReverseMap();
+
+            CreateMap<PersonagemDetalhes, PersonagemDetalhesUpdateDto>().ReverseMap();
+            CreateMap<PersonagemDinheiro, PersonagemDinheirosUpdateDto>().ReverseMap();
         }
     }
 }

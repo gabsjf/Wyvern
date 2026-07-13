@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wyvern.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Wyvern.Infrastructure.Data;
 namespace Wyvern.Infrastructure.Migrations
 {
     [DbContext(typeof(WyvernDbContext))]
-    partial class WyvernDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260713184317_AtualizacaoFicha55")]
+    partial class AtualizacaoFicha55
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

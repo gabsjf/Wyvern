@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,5 +21,8 @@ namespace Wyvern.Domain.Entities
         public int Nivel { get; set; }
         public int Xp { get; set; }
         public string Alinhamento { get; set; }
+        public string? Antecedente { get; set; }
+        public string? Subclasse { get; set; }
+        public string? Tamanho { get; set; }
     }
 }

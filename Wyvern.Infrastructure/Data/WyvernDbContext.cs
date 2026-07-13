@@ -24,6 +24,9 @@ namespace Wyvern.Infrastructure.Data
         public DbSet<Item> Itens { get; set; }
         public DbSet<Campanha> Campanhas { get; set; }
         public DbSet<Atributo> Atributos { get; set; }
+        public DbSet<PersonagemDetalhes> PersonagemDetalhes { get; set; }
+        public DbSet<PersonagemConjuracao> PersonagemConjuracoes { get; set; }
+        public DbSet<PersonagemDinheiro> PersonagemDinheiros { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,6 +64,27 @@ namespace Wyvern.Infrastructure.Data
                 .HasOne(pp => pp.personagem) 
                 .WithOne(p => p.PersonagemPlayer)
                 .HasForeignKey<PersonagemPlayer>(pp => pp.PersonagemId);
+
+            modelBuilder.Entity<PersonagemDetalhes>()
+                .HasKey(pd => pd.PersonagemId);
+            modelBuilder.Entity<PersonagemDetalhes>()
+                .HasOne(pd => pd.Personagem)
+                .WithOne(p => p.PersonagemDetalhes)
+                .HasForeignKey<PersonagemDetalhes>(pd => pd.PersonagemId);
+
+            modelBuilder.Entity<PersonagemConjuracao>()
+                .HasKey(pc => pc.PersonagemId);
+            modelBuilder.Entity<PersonagemConjuracao>()
+                .HasOne(pc => pc.Personagem)
+                .WithOne(p => p.PersonagemConjuracao)
+                .HasForeignKey<PersonagemConjuracao>(pc => pc.PersonagemId);
+
+            modelBuilder.Entity<PersonagemDinheiro>()
+                .HasKey(pd => pd.PersonagemId);
+            modelBuilder.Entity<PersonagemDinheiro>()
+                .HasOne(pd => pd.Personagem)
+                .WithOne(p => p.PersonagemDinheiro)
+                .HasForeignKey<PersonagemDinheiro>(pd => pd.PersonagemId);
 
 
           

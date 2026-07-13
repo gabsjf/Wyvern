@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Personagem;
 using Wyvern.Domain.Entities;
@@ -98,6 +98,18 @@ namespace Wyvern.Api.Controllers
                 _mapper.Map(personagemDto.PersonagemCombate, pBanco.PersonagemCombate);
             }
 
+            if (personagemDto.PersonagemDetalhes != null)
+            {
+                pBanco.PersonagemDetalhes ??= new PersonagemDetalhes { PersonagemId = pBanco.PersonagemId };
+                _mapper.Map(personagemDto.PersonagemDetalhes, pBanco.PersonagemDetalhes);
+            }
+
+            if (personagemDto.PersonagemDinheiro != null)
+            {
+                pBanco.PersonagemDinheiro ??= new PersonagemDinheiro { PersonagemId = pBanco.PersonagemId };
+                _mapper.Map(personagemDto.PersonagemDinheiro, pBanco.PersonagemDinheiro);
+            }
+
             await _uof.PersonagemRepository.UpdatePersonagemAsync(pBanco);
             return Ok(_mapper.Map<PersonagemResponseDto>(pBanco));
         }
@@ -108,6 +120,48 @@ namespace Wyvern.Api.Controllers
             var personagem = await _uof.PersonagemRepository.DeletePersonagemAsync(id);
             if (personagem == null) return NotFound("Personagem não encontrado");
             return Ok(new { mensagem = "Personagem desativado com sucesso", id });
+        }
+
+        [HttpPost("import-pdf")]
+        public async Task<ActionResult<PersonagemResponseDto>> ImportPdf(IFormFile file, [FromServices] Wyvern.Application.Services.IPdfParserService pdfParserService)
+        {
+            if (file == null || file.Length == 0) return BadRequest("Nenhum arquivo enviado.");
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+                var personagem = pdfParserService.ParsePdf(stream);
+                
+                // Salvar no banco
+                await _uof.PersonagemRepository.CreatePersonagemAsync(personagem);
+                
+                var retorno = await _uof.PersonagemRepository.GetPersonagemAsync(personagem.PersonagemId);
+                var retornoDto = _mapper.Map<PersonagemResponseDto>(retorno);
+                
+                return Ok(retornoDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao importar PDF: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id:int}/export-pdf")]
+        public async Task<IActionResult> ExportPdf(int id, [FromServices] Wyvern.Application.Services.IPdfExportService pdfExportService)
+        {
+            var pBanco = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (pBanco == null) return NotFound("Personagem não encontrado");
+
+            try
+            {
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "ficha55.pdf");
+                var pdfBytes = pdfExportService.ExportPdf(pBanco, templatePath);
+                return File(pdfBytes, "application/pdf", $"{pBanco.Nome ?? "Personagem"}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao exportar PDF: {ex.Message}");
+            }
         }
 
     }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Wyvern.Domain.Entities
@@ -20,6 +20,13 @@ namespace Wyvern.Domain.Entities
         public int Sabedoria { get; set; }
         [Required]
         public int Carisma { get; set; }
+
+        public bool ProficienciaSalvaguardaForca { get; set; }
+        public bool ProficienciaSalvaguardaDestreza { get; set; }
+        public bool ProficienciaSalvaguardaConstituicao { get; set; }
+        public bool ProficienciaSalvaguardaInteligencia { get; set; }
+        public bool ProficienciaSalvaguardaSabedoria { get; set; }
+        public bool ProficienciaSalvaguardaCarisma { get; set; }
 
         public Personagem Personagem { get; set; }
     }

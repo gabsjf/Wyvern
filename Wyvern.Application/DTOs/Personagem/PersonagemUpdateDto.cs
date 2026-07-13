@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Wyvern.Application.DTOs.Atributo;
 
 namespace Wyvern.Application.DTOs.Personagem
@@ -14,5 +14,7 @@ namespace Wyvern.Application.DTOs.Personagem
         public AtributoUpdateDto? Atributo { get; set; }
         public PersonagemPlayerUpdateDto? PersonagemPlayer { get; set; }
         public PersonagemCombateUpdateDto? PersonagemCombate { get; set; }
+        public PersonagemDetalhesUpdateDto? PersonagemDetalhes { get; set; }
+        public PersonagemDinheirosUpdateDto? PersonagemDinheiro { get; set; }
     }
 }
