@@ -77,14 +77,14 @@ namespace Wyvern.Application.Services
 
                 p.PersonagemCombate.ClasseArmadura = GetInt("N#C3#BAmeros Centralizados HV 8 Single_4");
                 p.PersonagemCombate.Iniciativa = GetInt("N#C3#BAmeros Centralizados HV 12 Single_2");
-                p.PersonagemCombate.Deslocamento = GetInt("N#C3#BAmeros Centralizados HV 12 Single_3"); 
+                p.PersonagemCombate.Deslocamento = GetString("N#C3#BAmeros Centralizados HV 12 Single_3");
                 p.PersonagemCombate.VidaMaxima = GetInt("Esquerda baixo 12_4");
                 p.PersonagemCombate.VidaAtual = GetInt("Esquerda baixo 12");
                 p.PersonagemCombate.VidaTemporaria = GetInt("Esquerda baixo 12_5");
 
                 var equip = GetString("Caixa de texto 6_4");
                 if (!string.IsNullOrEmpty(equip)) {
-                    p.PersonagemItens.Add(new PersonagemItem { Item = new Item { Nome = "Equipamentos", Descricao = equip } });
+                    p.PersonagemItens.Add(new PersonagemItem { Nome = equip, TipoItem = "Equipamentos", Raridade = "Comum" });
                 }
             }
             else
@@ -117,14 +117,14 @@ namespace Wyvern.Application.Services
 
                 p.PersonagemCombate.ClasseArmadura = GetInt("AC");
                 p.PersonagemCombate.Iniciativa = GetInt("Initiative");
-                p.PersonagemCombate.Deslocamento = GetInt("Speed"); 
+                p.PersonagemCombate.Deslocamento = GetString("Speed");
                 p.PersonagemCombate.VidaMaxima = GetInt("HPMax");
                 p.PersonagemCombate.VidaAtual = GetInt("HPCurrent");
                 p.PersonagemCombate.VidaTemporaria = GetInt("HPTemp");
 
                 var equipText = GetString("Equipment");
                 if (!string.IsNullOrEmpty(equipText)) {
-                    p.PersonagemItens.Add(new PersonagemItem { Item = new Item { Nome = "Equipamento Bruto", Descricao = equipText } });
+                    p.PersonagemItens.Add(new PersonagemItem { Nome = equipText, TipoItem = "Equipamento Bruto", Raridade = "Comum" });
                 }
             }
 

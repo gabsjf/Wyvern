@@ -16,5 +16,18 @@ namespace Wyvern.Application.DTOs.Personagem
         public PersonagemCombateUpdateDto? PersonagemCombate { get; set; }
         public PersonagemDetalhesUpdateDto? PersonagemDetalhes { get; set; }
         public PersonagemDinheirosUpdateDto? PersonagemDinheiro { get; set; }
+        public PersonagemConjuracaoDto? PersonagemConjuracao { get; set; }
+        
+        public List<PersonagemAtaqueCreateDto>? PersonagemAtaques { get; set; }
+        public List<PersonagemMagiaAddDto>? PersonagemMagias { get; set; }
+        
+        public PersonagemNpcDto? PersonagemNpc { get; set; }
+        public List<PersonagemAcaoPadraoDto>? PersonagemAcoesPadrao { get; set; }
+        public List<PersonagemAcaoBonusDto>? PersonagemAcoesBonus { get; set; }
+        public List<PersonagemReacaoDto>? PersonagemReacoes { get; set; }
+        public List<PersonagemAcaoLendariaDto>? PersonagemAcoesLendarias { get; set; }
+        public List<PersonagemTracoEspecialDto>? PersonagemTracosEspeciais { get; set; }
+        
+        public List<int>? PericiasIds { get; set; }
     }
 }

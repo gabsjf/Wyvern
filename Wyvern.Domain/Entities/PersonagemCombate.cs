@@ -14,7 +14,8 @@ namespace Wyvern.Domain.Entities
         public int VidaMaxima { get; set; }
         public int ClasseArmadura { get; set; }
         public int Iniciativa { get; set; }
-        public int Deslocamento { get; set; }
+        public string? Deslocamento { get; set; } // Agora string para suportar '9m', etc.
+        public int ProficienciaBonus { get; set; } = 2; // Padrão de D&D nv 1
         public bool InspiracaoHeroica { get; set; }
         public int VidaTemporaria { get; set; }
         public string? DadoVidaMaximo { get; set; }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Wyvern.Infrastructure.Data;
 using Wyvern.Infrastructure.Repositories.Campanha;
 using Wyvern.Infrastructure.Repositories.Item;
@@ -9,86 +7,47 @@ using Wyvern.Infrastructure.Repositories.Pericia;
 using Wyvern.Infrastructure.Repositories.Personagem;
 using Wyvern.Infrastructure.Repositories.Sessao;
 using Wyvern.Infrastructure.Repositories.Usuario;
-
+using Wyvern.Infrastructure.Repositories.Combate;
+using Wyvern.Infrastructure.Repositories.Anotacao;
+using Wyvern.Infrastructure.Repositories.PastaAnotacao;
 
 namespace Wyvern.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly WyvernDbContext _context;
 
-        private ICampanhaRepository _campanhaRepo;
-        private IItemRepository _itemRepo;
-
-        private IMagiaRepository _magiaRepo;
-
-        private IPericiaRepository _periciaRepo;
-
-        private IPersonagemRepository _personagemRepo;
-
-        private ISessaoRepository _sessaoRepo;
-
-        private IUsuarioRepository _usuarioRepo;
-        public WyvernDbContext _context;
-
-        public UnitOfWork (WyvernDbContext context)
+        public UnitOfWork(WyvernDbContext context)
         {
             _context = context;
+            CampanhaRepository = new CampanhaRepository(_context);
+            ItemRepository = new ItemRepository(_context);
+            MagiaRepository = new MagiaRepository(_context);
+            PericiaRepository = new PericiaRepository(_context);
+            PersonagemRepository = new PersonagemRepository(_context);
+            SessaoRepository = new SessaoRepository(_context);
+            UsuarioRepository = new UsuarioRepository(_context);
+            AnotacaoRepository = new AnotacaoRepository(_context);
+            PastaAnotacaoRepository = new PastaAnotacaoRepository(_context);
+            CombateRepository = new CombateRepository(_context);
         }
 
-        public ICampanhaRepository CampanhaRepository
-        {
-            get
-            {
-                return _campanhaRepo = _campanhaRepo ?? new CampanhaRepository(_context);
-            }
-        }
-        public IItemRepository ItemRepository
-        {
-            get
-            {
-                return _itemRepo = _itemRepo ?? new ItemRepository(_context);
-            }
-        }
-        public IMagiaRepository MagiaRepository
-        {
-            get
-            {
-                return _magiaRepo = _magiaRepo ?? new MagiaRepository(_context);
-            }
-        }
-        public IPericiaRepository PericiaRepository
-        {
-            get
-            {
-                return _periciaRepo = _periciaRepo ?? new PericiaRepository(_context);
-            }
-        }
-        public IPersonagemRepository PersonagemRepository
-        {
-            get
-            {
-                return _personagemRepo = _personagemRepo ?? new PersonagemRepository(_context);
-            }
-        }
-        public ISessaoRepository SessaoRepository
-        {
-            get
-            {
-                return _sessaoRepo = _sessaoRepo ?? new SessaoRepository(_context);
-            }
-        }
-        public IUsuarioRepository UsuarioRepository
-        {
-            get
-            {
-                return _usuarioRepo = _usuarioRepo ?? new UsuarioRepository(_context);
-            }
-        }
+        public ICampanhaRepository CampanhaRepository { get; }
+        public IItemRepository ItemRepository { get; }
+        public IMagiaRepository MagiaRepository { get; }
+        public IPericiaRepository PericiaRepository { get; }
+        public IPersonagemRepository PersonagemRepository { get; }
+        public ISessaoRepository SessaoRepository { get; }
+        public IUsuarioRepository UsuarioRepository { get; }
+        public IAnotacaoRepository AnotacaoRepository { get; }
+        public IPastaAnotacaoRepository PastaAnotacaoRepository { get; }
+        public ICombateRepository CombateRepository { get; }
 
         public void Commit()
         {
             _context.SaveChanges();
         }
+
         public async Task CommitAsync()
         {
             await _context.SaveChangesAsync();

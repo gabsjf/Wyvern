@@ -27,10 +27,24 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
         public async Task<PersonagemEntity?> GetPersonagemAsync(int id)
         {
             return await _context.Personagens
-                .Include(p => p.Atributo)
                 .Include(p => p.PersonagemPlayer)
+                .Include(p => p.Atributo)
                 .Include(p => p.PersonagemCombate)
                 .Include(p => p.PersonagemDetalhes)
+                .Include(p => p.PersonagemDinheiro)
+                .Include(p => p.PersonagemItens)
+                .Include(p => p.PersonagemMagias)
+                .Include(p => p.PersonagemAtaques)
+                .Include(p => p.PersonagemNpc)
+                .Include(p => p.PersonagemAcoesPadrao)
+                .Include(p => p.PersonagemAcoesBonus)
+                .Include(p => p.PersonagemReacoes)
+                .Include(p => p.PersonagemAcoesLendarias)
+                .Include(p => p.PersonagemTracosEspeciais)
+                .Include(p => p.PersonagemConjuracao)
+                .Include(p => p.PersonagemPericias!)
+                    .ThenInclude(pp => pp.Pericia)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(p => p.PersonagemId == id && p.Ativo);
         }
 

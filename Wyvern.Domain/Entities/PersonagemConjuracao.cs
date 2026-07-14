@@ -10,28 +10,28 @@ namespace Wyvern.Domain.Entities
         public int PersonagemId { get; set; }
         public Personagem Personagem { get; set; }
 
-        public string? AtributoConjuracao { get; set; }
-        public int ModificadorConjuracao { get; set; }
-        public int CdMagia { get; set; }
-        public int ModificadorAtaqueMagico { get; set; }
+        public string? AtributoConjuracao { get; set; } // INT, SAB, CAR, etc.
 
-        public int SlotsTotalNivel1 { get; set; }
-        public int SlotsGastosNivel1 { get; set; }
-        public int SlotsTotalNivel2 { get; set; }
-        public int SlotsGastosNivel2 { get; set; }
-        public int SlotsTotalNivel3 { get; set; }
-        public int SlotsGastosNivel3 { get; set; }
-        public int SlotsTotalNivel4 { get; set; }
-        public int SlotsGastosNivel4 { get; set; }
-        public int SlotsTotalNivel5 { get; set; }
-        public int SlotsGastosNivel5 { get; set; }
-        public int SlotsTotalNivel6 { get; set; }
-        public int SlotsGastosNivel6 { get; set; }
-        public int SlotsTotalNivel7 { get; set; }
-        public int SlotsGastosNivel7 { get; set; }
-        public int SlotsTotalNivel8 { get; set; }
-        public int SlotsGastosNivel8 { get; set; }
-        public int SlotsTotalNivel9 { get; set; }
-        public int SlotsGastosNivel9 { get; set; }
+        // Espaços de Magia (Spell Slots) Máximos
+        public int SlotsNivel1Max { get; set; }
+        public int SlotsNivel2Max { get; set; }
+        public int SlotsNivel3Max { get; set; }
+        public int SlotsNivel4Max { get; set; }
+        public int SlotsNivel5Max { get; set; }
+        public int SlotsNivel6Max { get; set; }
+        public int SlotsNivel7Max { get; set; }
+        public int SlotsNivel8Max { get; set; }
+        public int SlotsNivel9Max { get; set; }
+
+        // Espaços de Magia (Spell Slots) Atuais (não gastos)
+        public int SlotsNivel1Atual { get; set; }
+        public int SlotsNivel2Atual { get; set; }
+        public int SlotsNivel3Atual { get; set; }
+        public int SlotsNivel4Atual { get; set; }
+        public int SlotsNivel5Atual { get; set; }
+        public int SlotsNivel6Atual { get; set; }
+        public int SlotsNivel7Atual { get; set; }
+        public int SlotsNivel8Atual { get; set; }
+        public int SlotsNivel9Atual { get; set; }
     }
 }

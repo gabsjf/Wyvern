@@ -73,6 +73,10 @@ app.Run();
 [JsonSerializable(typeof(Wyvern.Application.DTOs.Campanha.CampanhaResponseDto))]
 [JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Sessao.SessaoResponseDto>))]
 [JsonSerializable(typeof(Wyvern.Application.DTOs.Sessao.SessaoResponseDto))]
+[JsonSerializable(typeof(Wyvern.Domain.Entities.Combate))]
+[JsonSerializable(typeof(IEnumerable<Wyvern.Domain.Entities.Combate>))]
+[JsonSerializable(typeof(Wyvern.Domain.Entities.CombateParticipante))]
+[JsonSerializable(typeof(IEnumerable<Wyvern.Domain.Entities.CombateParticipante>))]
 internal partial class AppJsonContext : JsonSerializerContext
 {
 }

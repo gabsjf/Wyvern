@@ -30,5 +30,13 @@ namespace Wyvern.Domain.Entities
         public PersonagemDetalhes? PersonagemDetalhes { get; set; }
         public PersonagemConjuracao? PersonagemConjuracao { get; set; }
         public PersonagemDinheiro? PersonagemDinheiro { get; set; }
+        public ICollection<PersonagemAtaque>? PersonagemAtaques { get; set; }
+
+        public PersonagemNpc? PersonagemNpc { get; set; }
+        public ICollection<PersonagemAcaoPadrao>? PersonagemAcoesPadrao { get; set; }
+        public ICollection<PersonagemAcaoBonus>? PersonagemAcoesBonus { get; set; }
+        public ICollection<PersonagemReacao>? PersonagemReacoes { get; set; }
+        public ICollection<PersonagemAcaoLendaria>? PersonagemAcoesLendarias { get; set; }
+        public ICollection<PersonagemTracoEspecial>? PersonagemTracosEspeciais { get; set; }
     }
 }

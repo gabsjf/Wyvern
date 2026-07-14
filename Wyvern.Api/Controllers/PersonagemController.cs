@@ -56,6 +56,14 @@ namespace Wyvern.Api.Controllers
             personagem.CriadoEm = DateTime.Now;
             personagem.Ativo = true;
 
+            if (personagemDto.PericiasIds != null && personagemDto.PericiasIds.Any())
+            {
+                personagem.PersonagemPericias = personagemDto.PericiasIds.Select(id => new PersonagemPericia
+                {
+                    PericiaId = id
+                }).ToList();
+            }
+
             await _uof.PersonagemRepository.CreatePersonagemAsync(personagem);
 
             
@@ -110,6 +118,82 @@ namespace Wyvern.Api.Controllers
                 _mapper.Map(personagemDto.PersonagemDinheiro, pBanco.PersonagemDinheiro);
             }
 
+            if (personagemDto.PersonagemConjuracao != null)
+            {
+                pBanco.PersonagemConjuracao ??= new PersonagemConjuracao { PersonagemId = pBanco.PersonagemId };
+                _mapper.Map(personagemDto.PersonagemConjuracao, pBanco.PersonagemConjuracao);
+            }
+
+            if (personagemDto.PersonagemNpc != null)
+            {
+                pBanco.PersonagemNpc ??= new PersonagemNpc { PersonagemId = pBanco.PersonagemId };
+                _mapper.Map(personagemDto.PersonagemNpc, pBanco.PersonagemNpc);
+            }
+
+            if (personagemDto.PersonagemAcoesPadrao != null)
+            {
+                pBanco.PersonagemAcoesPadrao?.Clear();
+                pBanco.PersonagemAcoesPadrao ??= new List<PersonagemAcaoPadrao>();
+                foreach(var item in _mapper.Map<List<PersonagemAcaoPadrao>>(personagemDto.PersonagemAcoesPadrao))
+                    pBanco.PersonagemAcoesPadrao.Add(item);
+            }
+
+            if (personagemDto.PersonagemAcoesBonus != null)
+            {
+                pBanco.PersonagemAcoesBonus?.Clear();
+                pBanco.PersonagemAcoesBonus ??= new List<PersonagemAcaoBonus>();
+                foreach(var item in _mapper.Map<List<PersonagemAcaoBonus>>(personagemDto.PersonagemAcoesBonus))
+                    pBanco.PersonagemAcoesBonus.Add(item);
+            }
+
+            if (personagemDto.PersonagemReacoes != null)
+            {
+                pBanco.PersonagemReacoes?.Clear();
+                pBanco.PersonagemReacoes ??= new List<PersonagemReacao>();
+                foreach(var item in _mapper.Map<List<PersonagemReacao>>(personagemDto.PersonagemReacoes))
+                    pBanco.PersonagemReacoes.Add(item);
+            }
+
+            if (personagemDto.PersonagemAcoesLendarias != null)
+            {
+                pBanco.PersonagemAcoesLendarias?.Clear();
+                pBanco.PersonagemAcoesLendarias ??= new List<PersonagemAcaoLendaria>();
+                foreach(var item in _mapper.Map<List<PersonagemAcaoLendaria>>(personagemDto.PersonagemAcoesLendarias))
+                    pBanco.PersonagemAcoesLendarias.Add(item);
+            }
+
+            if (personagemDto.PersonagemTracosEspeciais != null)
+            {
+                pBanco.PersonagemTracosEspeciais?.Clear();
+                pBanco.PersonagemTracosEspeciais ??= new List<PersonagemTracoEspecial>();
+                foreach(var item in _mapper.Map<List<PersonagemTracoEspecial>>(personagemDto.PersonagemTracosEspeciais))
+                    pBanco.PersonagemTracosEspeciais.Add(item);
+            }
+
+            if (personagemDto.PersonagemAtaques != null)
+            {
+                pBanco.PersonagemAtaques?.Clear();
+                pBanco.PersonagemAtaques ??= new List<PersonagemAtaque>();
+                foreach(var item in _mapper.Map<List<PersonagemAtaque>>(personagemDto.PersonagemAtaques))
+                    pBanco.PersonagemAtaques.Add(item);
+            }
+
+            if (personagemDto.PersonagemMagias != null)
+            {
+                pBanco.PersonagemMagias?.Clear();
+                pBanco.PersonagemMagias ??= new List<PersonagemMagia>();
+                foreach(var item in _mapper.Map<List<PersonagemMagia>>(personagemDto.PersonagemMagias))
+                    pBanco.PersonagemMagias.Add(item);
+            }
+
+            if (personagemDto.PericiasIds != null)
+            {
+                pBanco.PersonagemPericias?.Clear();
+                pBanco.PersonagemPericias ??= new List<PersonagemPericia>();
+                foreach(var pId in personagemDto.PericiasIds)
+                    pBanco.PersonagemPericias.Add(new PersonagemPericia { PericiaId = pId, PersonagemId = pBanco.PersonagemId });
+            }
+
             await _uof.PersonagemRepository.UpdatePersonagemAsync(pBanco);
             return Ok(_mapper.Map<PersonagemResponseDto>(pBanco));
         }
@@ -162,6 +246,96 @@ namespace Wyvern.Api.Controllers
             {
                 return BadRequest($"Erro ao exportar PDF: {ex.Message}");
             }
+        }
+
+        [HttpPost("{id:int}/items")]
+        public async Task<ActionResult> AddItem(int id, PersonagemItemAddDto dto)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+            
+            p.PersonagemItens ??= new List<PersonagemItem>();
+            var item = _mapper.Map<PersonagemItem>(dto);
+            item.PersonagemId = id;
+            p.PersonagemItens.Add(item);
+            await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}/items/{itemId:int}")]
+        public async Task<ActionResult> RemoveItem(int id, int itemId)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+
+            var item = p.PersonagemItens?.FirstOrDefault(i => i.PersonagemItemId == itemId);
+            if (item != null)
+            {
+                p.PersonagemItens!.Remove(item);
+                await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            }
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/magias")]
+        public async Task<ActionResult> AddMagia(int id, PersonagemMagiaAddDto dto)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+            
+            p.PersonagemMagias ??= new List<PersonagemMagia>();
+            var magia = _mapper.Map<PersonagemMagia>(dto);
+            magia.PersonagemId = id;
+            p.PersonagemMagias.Add(magia);
+            await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}/magias/{magiaId:int}")]
+        public async Task<ActionResult> RemoveMagia(int id, int magiaId)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+
+            var magia = p.PersonagemMagias?.FirstOrDefault(m => m.PersonagemMagiaId == magiaId);
+            if (magia != null)
+            {
+                p.PersonagemMagias!.Remove(magia);
+                await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            }
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/ataques")]
+        public async Task<ActionResult> AddAtaque(int id, PersonagemAtaqueCreateDto dto)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+            
+            p.PersonagemAtaques ??= new List<PersonagemAtaque>();
+            var ataque = _mapper.Map<PersonagemAtaque>(dto);
+            ataque.PersonagemId = id;
+            p.PersonagemAtaques.Add(ataque);
+            await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}/ataques/{ataqueId:int}")]
+        public async Task<ActionResult> RemoveAtaque(int id, int ataqueId)
+        {
+            var p = await _uof.PersonagemRepository.GetPersonagemAsync(id);
+            if (p == null) return NotFound();
+
+            var ataque = p.PersonagemAtaques?.FirstOrDefault(a => a.PersonagemAtaqueId == ataqueId);
+            if (ataque != null)
+            {
+                p.PersonagemAtaques!.Remove(ataque);
+                await _uof.PersonagemRepository.UpdatePersonagemAsync(p);
+            }
+            return Ok();
         }
 
     }
