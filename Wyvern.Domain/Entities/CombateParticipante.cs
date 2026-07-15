@@ -20,5 +20,8 @@ namespace Wyvern.Domain.Entities
         public int ClasseArmadura { get; set; }
         public bool IsInimigo { get; set; } = false;
         public string Condicoes { get; set; } = string.Empty;
+        
+        public int SucessosMorte { get; set; } = 0;
+        public int FalhasMorte { get; set; } = 0;
     }
 }

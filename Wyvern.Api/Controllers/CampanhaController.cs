@@ -1,13 +1,14 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Campanha;
 using Wyvern.Application.DTOs.Sessao;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Wyvern.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class CampanhaController : ControllerBase

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Wyvern.Application.DTOs.Anotacao;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Wyvern.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class PastaAnotacaoController : ControllerBase

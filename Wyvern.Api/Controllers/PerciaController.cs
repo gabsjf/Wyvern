@@ -1,21 +1,25 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Pericia;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
-[ApiController]
-[Route("[controller]")]
-public class PericiaController : ControllerBase
+namespace Wyvern.Api.Controllers
 {
-    private readonly IUnitOfWork _uof;
-    private readonly IMapper _mapper;
-
-    public PericiaController(IUnitOfWork uof, IMapper mapper)
+    [Authorize]
+    [ApiController]
+    [Route("[controller]")]
+    public class PerciaController : ControllerBase
     {
-        _uof = uof;
-        _mapper = mapper;
-    }
+        private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
+
+        public PerciaController(IUnitOfWork uof, IMapper mapper)
+        {
+            _uof = uof;
+            _mapper = mapper;
+        }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PericiaResponseDto>>> GetPericias()
@@ -67,4 +71,5 @@ public class PericiaController : ControllerBase
         if (pericia == null) return NotFound("Perícia não encontrada.");
         return Ok(new { mensagem = "Perícia desativada", id });
     }
+}
 }

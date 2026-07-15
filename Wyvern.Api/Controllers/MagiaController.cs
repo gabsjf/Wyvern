@@ -1,22 +1,25 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Magia;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
-[ApiController]
-[Route("[controller]")]
-public class MagiaController : ControllerBase
+namespace Wyvern.Api.Controllers
 {
-    private readonly IUnitOfWork _uof;
-    private readonly IMapper _mapper;
-
-    public MagiaController(IUnitOfWork uof, IMapper mapper )
+    [Authorize]
+    [ApiController]
+    [Route("[controller]")]
+    public class MagiaController : ControllerBase
     {
-        _uof = uof;
-        _mapper = mapper;
+        private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
 
-    }
+        public MagiaController(IUnitOfWork uof, IMapper mapper)
+        {
+            _uof = uof;
+            _mapper = mapper;
+        }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MagiaResponseDto>>> GetMagias()
@@ -71,4 +74,5 @@ public class MagiaController : ControllerBase
         magia.Ativo = false;
         return Ok(new { mensagem = "Magia desativada", id });
     }
+}
 }

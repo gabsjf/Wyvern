@@ -8,7 +8,10 @@ using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Data;
 using Wyvern.Infrastructure.Repositories;
 using Wyvern.Infrastructure.Repositories.Campanha;
-
+using Wyvern.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
@@ -26,6 +29,32 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddScoped<IPdfParserService, PdfParserService>();
 builder.Services.AddScoped<IPdfExportService, PdfExportService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "WyvernSuperSecretKey1234567890!!";
+var key = Encoding.ASCII.GetBytes(jwtSecret);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+builder.Services.AddAuthorization();
 
 builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AtributoProfile).Assembly));
@@ -60,6 +89,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 
@@ -67,6 +99,9 @@ app.Run();
 
 [JsonSerializable(typeof(IEnumerable<Usuario>))]
 [JsonSerializable(typeof(Usuario))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Auth.LoginDto))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Auth.RegisterDto))]
+[JsonSerializable(typeof(Wyvern.Application.DTOs.Auth.AuthResponseDto))]
 [JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Personagem.PersonagemResponseDto>))]
 [JsonSerializable(typeof(Wyvern.Application.DTOs.Personagem.PersonagemResponseDto))]
 [JsonSerializable(typeof(IEnumerable<Wyvern.Application.DTOs.Campanha.CampanhaResponseDto>))]

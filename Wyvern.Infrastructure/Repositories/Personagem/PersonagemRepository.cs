@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Wyvern.Infrastructure.Data;
+using Wyvern.Domain.Interfaces;
 using PersonagemEntity = Wyvern.Domain.Entities.Personagem;
 
 namespace Wyvern.Infrastructure.Repositories.Personagem
@@ -7,10 +8,12 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
     public class PersonagemRepository : IPersonagemRepository
     {
         private readonly WyvernDbContext _context;
+        private readonly ICurrentUserService _currentUser;
 
-        public PersonagemRepository(WyvernDbContext context)
+        public PersonagemRepository(WyvernDbContext context, ICurrentUserService currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         public async Task<IEnumerable<PersonagemEntity>> GetPersonagensAsync()
@@ -20,7 +23,7 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 .Include(p => p.Atributo)
                 .Include(p => p.PersonagemPlayer)
                 .Include(p => p.PersonagemCombate)
-                .Where(p => p.Ativo)
+                .Where(p => p.Ativo && p.CriadoPorId == _currentUser.UserId)
                 .ToListAsync();
         }
 
@@ -45,13 +48,18 @@ namespace Wyvern.Infrastructure.Repositories.Personagem
                 .Include(p => p.PersonagemPericias!)
                     .ThenInclude(pp => pp.Pericia)
                 .AsSplitQuery()
-                .FirstOrDefaultAsync(p => p.PersonagemId == id && p.Ativo);
+                .FirstOrDefaultAsync(p => p.PersonagemId == id && p.Ativo && p.CriadoPorId == _currentUser.UserId);
         }
 
         public async Task<PersonagemEntity> CreatePersonagemAsync(PersonagemEntity personagem)
         {
             if (personagem is null)
                 throw new ArgumentNullException(nameof(personagem));
+
+            if (_currentUser.UserId.HasValue)
+            {
+                personagem.CriadoPorId = _currentUser.UserId.Value;
+            }
 
             _context.Personagens.Add(personagem);
             await _context.SaveChangesAsync();

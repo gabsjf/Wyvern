@@ -1,12 +1,15 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Item;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Wyvern.Api.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ItemController : ControllerBase
     {
         private readonly IUnitOfWork _uof;

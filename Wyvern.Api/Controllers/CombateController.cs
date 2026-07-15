@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Wyvern.Application.DTOs.Combate;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Wyvern.Api.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CombateController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -37,7 +39,9 @@ namespace Wyvern.Api.Controllers
                 VidaMaxima = p.VidaMaxima,
                 ClasseArmadura = p.ClasseArmadura,
                 IsInimigo = p.IsInimigo,
-                Condicoes = p.Condicoes
+                Condicoes = p.Condicoes,
+                SucessosMorte = p.SucessosMorte,
+                FalhasMorte = p.FalhasMorte
             });
 
             return Ok(result);
@@ -131,12 +135,23 @@ namespace Wyvern.Api.Controllers
             var combate = await _uof.CombateRepository.GetCombateAsync(id);
             if (combate != null && combate.Participantes != null && combate.Participantes.Any())
             {
-                combate.TurnoAtualIndex++;
-                if (combate.TurnoAtualIndex >= combate.Participantes.Count)
+                var participantesSorted = combate.Participantes.OrderByDescending(p => p.Iniciativa).ToList();
+                int originalIndex = combate.TurnoAtualIndex;
+                do
                 {
-                    combate.TurnoAtualIndex = 0;
-                    combate.RodadaAtual++;
-                }
+                    combate.TurnoAtualIndex++;
+                    if (combate.TurnoAtualIndex >= participantesSorted.Count)
+                    {
+                        combate.TurnoAtualIndex = 0;
+                        combate.RodadaAtual++;
+                    }
+
+                    var p = participantesSorted[combate.TurnoAtualIndex];
+                    bool isMorto = (p.IsInimigo && p.VidaAtual <= 0) || (!p.IsInimigo && p.FalhasMorte >= 3);
+                    if (!isMorto) break;
+
+                } while (combate.TurnoAtualIndex != originalIndex);
+
                 await _uof.CombateRepository.UpdateCombateAsync(combate);
             }
             return NoContent();
@@ -153,6 +168,8 @@ namespace Wyvern.Api.Controllers
 
             participante.VidaAtual = dto.VidaAtual;
             participante.Condicoes = dto.Condicoes ?? string.Empty;
+            participante.SucessosMorte = dto.SucessosMorte;
+            participante.FalhasMorte = dto.FalhasMorte;
 
             await _uof.CombateRepository.UpdateParticipanteAsync(participante);
             return NoContent();

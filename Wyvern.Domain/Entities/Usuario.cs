@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,6 +16,8 @@ namespace Wyvern.Domain.Entities
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        [Required]
+        public string SenhaHash { get; set; }
         public DateTime CriadoEm { get; set; }
         public List<Campanha>? Campanhas { get; set; }
         public bool Ativo { get; set; } = true;

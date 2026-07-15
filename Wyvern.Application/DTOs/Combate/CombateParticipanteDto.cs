@@ -12,5 +12,7 @@ namespace Wyvern.Application.DTOs.Combate
         public int ClasseArmadura { get; set; }
         public bool IsInimigo { get; set; }
         public string Condicoes { get; set; } = string.Empty;
+        public int SucessosMorte { get; set; }
+        public int FalhasMorte { get; set; }
     }
 }

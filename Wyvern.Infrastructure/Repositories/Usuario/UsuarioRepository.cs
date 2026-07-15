@@ -28,6 +28,12 @@ namespace Wyvern.Infrastructure.Repositories.Usuario
                 .FirstOrDefaultAsync(u => u.UsuarioId == id && u.Ativo);
         }
 
+        public async Task<UsuarioEntity?> GetByEmailAsync(string email)
+        {
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == email && u.Ativo);
+        }
+
         public async Task<UsuarioEntity> CreateUsuarioAsync(UsuarioEntity usuario)
         {
             if (usuario is null)

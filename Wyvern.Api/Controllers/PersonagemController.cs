@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Wyvern.Application.DTOs.Personagem;
 using Wyvern.Domain.Entities;
 using Wyvern.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Wyvern.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class PersonagemController : ControllerBase
